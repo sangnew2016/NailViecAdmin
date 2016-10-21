@@ -1,0 +1,116 @@
+---
+title: Owner Shop
+icon: fa fa-table
+cdncss:
+- https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap.min.css
+- //cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.css
+- //cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.theme.min.css
+- //cdnjs.cloudflare.com/ajax/libs/jQuery-Validation-Engine/2.6.4/validationEngine.jquery.min.css
+cdnjs:
+- https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js
+- https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js
+- https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js
+- https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.6/js/jquery.tablesorter.min.js
+- //cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js
+- //cdnjs.cloudflare.com/ajax/libs/jQuery-Validation-Engine/2.6.4/jquery.validationEngine.min.js
+- //cdnjs.cloudflare.com/ajax/libs/jQuery-Validation-Engine/2.6.4/languages/jquery.validationEngine-en.min.js
+- //cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js
+scripts:
+- Metis.OwnerShop()
+- Metis.metisSortable()
+---
+<style>
+    .form-control.col-lg-6 {
+        width: 50% !important;
+    }
+    .button-add-shop-owner {
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+    .row-shop-owner {
+        cursor: pointer;
+    }
+</style>
+
+<!--Begin Datatables-->
+<div class="row">
+  <div class="col-lg-12">
+        <div class="box">
+            <header>
+                <div class="icons"><i class="fa fa-table"></i></div>
+                <h5>Owner Shop</h5>
+            </header>
+            <div id="dev-grid-shop-owner" class="body">
+               <!-- generate grid-->
+            </div>
+            <div class="button-add-shop-owner">
+                <button class="btn btn-primary" id="dev-add-shop-owner">Add Shop-Owner</button> 
+                <button class="btn btn-default" id="dev-cancel-shop-owner">Cancel</button>               
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+<!--End Datatables-->
+
+
+
+<div class="row" id="dev-edit-shop-owner-area">
+    <div class="col-lg-12">
+        <div class="box">
+            <header>
+                <div class="icons"><i class="fa fa-th-large"></i></div>
+                <h5>Edit Area</h5>
+                <!-- .toolbar -->
+            {{> toolbar}}
+            <!-- /.toolbar -->
+
+            </header>
+            <div id="collapseOne" class="body">
+                <div class="form-horizontal">
+
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Full Name</label>
+                        <div class="col-lg-4">
+                            <input type="text" id="fullName" name="fullName" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Phone</label>
+                        <div class="col-lg-4">
+                            <input type="text" id="phone" name="phone" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">E-mail</label>
+
+                        <div class="col-lg-4">
+                            <input type="email" id="emailAddress" name="emailAddress" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Password</label>
+
+                        <div class="col-lg-4">
+                            <input type="password" id="password" name="password" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Confirm Password</label>
+
+                        <div class="col-lg-4">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-actions no-margin-bottom">
+                        <button class="btn btn-primary" id="dev-save-shop-owner">Save Shop-Owner</button>                    
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
