@@ -3,7 +3,7 @@
 # =============================================
 
 dest: public
-assets: dist/assets
+assets: dist/assets/xxx
 
 src: src
 templates: src/templates

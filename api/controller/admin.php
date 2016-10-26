@@ -60,7 +60,7 @@ class Admin {
 	}
 
 	function postShopOwner($request) {
-		$message = validateShopOwner($request);
+		$message = $this->validateShopOwner($request);
 		if (strlen($message) > 0) {
 			echo $message;
 			return;
@@ -73,15 +73,16 @@ class Admin {
 		$password = Functions::GetTextParam($request, 'password');
 		$confirmPassword = Functions::GetTextParam($request, 'confirmPassword');
 		
-		$sql = "insert into NailShopOwner(ShopOwnerStatusId, FullName, Phone, Email, Password, ConfirmPassword) 
-			values($shopOwnerStatusId, '$fullName', '$phone', '$emailAddress', '$password', '$confirmPassword')";
+		$sql = "insert into NailShopOwner(ShopOwnerStatusId, FullName, Phone, Email, Password) 
+			values($shopOwnerStatusId, '$fullName', '$phone', '$emailAddress', '$password')";
+		
 		$result = Data::Query($sql);
 		
 		echo $result;
 	}
 
 	function putShopOwner($request) {
-		$message = validateShopOwner($request);
+		$message = $this->validateShopOwner($request);
 		if (strlen($message) > 0) {
 			echo $message;
 			return;
@@ -96,15 +97,20 @@ class Admin {
 		$confirmPassword = Functions::GetTextParam($request, 'confirmPassword');
 		
 		$sql = "update NailShopOwner 
-			set ShopOwnerStatusId = $shopOwnerStatusId, 
-				FullName = '$fullname', 
-				Phone = '$hone', 
-				Email = '$emailAddress', 
-				Password = '$password' 
-			where Id = $id";
+				set ShopOwnerStatusId = $shopOwnerStatusId, 
+					FullName = '$fullName', 
+					Phone = '$phone', 
+					Email = '$emailAddress', 
+					Password = '$password' 
+				where Id = $id";
+		
 		$result = Data::Query($sql);
 		
 		echo $result;
+	}
+
+	function validateShopOwner($request) {
+		return '';
 	}
 
 	function getAreas($request) {		

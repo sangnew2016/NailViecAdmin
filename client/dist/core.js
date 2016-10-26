@@ -45,8 +45,12 @@
         $.ajax({
             url: apiUrl + url,
             success: function success(data) {
-                var json = JSON.parse(data);
-                defer.resolve(json);
+                try {
+                    var json = JSON.parse(data);
+                    defer.resolve(json);
+                } catch (ex) {
+                    defer.resolve(data);
+                }
             },
             error: function error(_error) {
                 console.log(_error);
@@ -63,10 +67,37 @@
             url: apiUrl + url,
             data: data,
             success: function success(data) {
-                defer.resolve(json);
+                try {
+                    var json = JSON.parse(data);
+                    defer.resolve(json);
+                } catch (ex) {
+                    defer.resolve(data);
+                }
             },
             error: function error(_error2) {
                 console.log(_error2);
+            }
+        });
+
+        return defer.promise();
+    };
+
+    Metis.prototype.putData = function (url, data) {
+        var defer = $.Deferred();
+
+        $.ajax({
+            url: apiUrl + url,
+            data: data,
+            success: function success(data) {
+                try {
+                    var json = JSON.parse(data);
+                    defer.resolve(json);
+                } catch (ex) {
+                    defer.resolve(data);
+                }
+            },
+            error: function error(_error3) {
+                console.log(_error3);
             }
         });
 

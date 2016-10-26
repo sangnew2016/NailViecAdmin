@@ -1079,35 +1079,8 @@
             $('#dev-add-shop-owner').on('click', function (event) {
                 fillValueInputControls({});
                 showEditArea(true);
+                Metis.OwnerShop.Id = 0;
                 $('#dev-cancel-shop-owner').text('Cancel Adding');
-            });
-
-            $('#dev-save-shop-owner').on('click', function (event) {
-                var shopOwnerId = Metis.OwnerShop.Id || null;
-                var postedData = getPostedShopOwnerInput();
-
-                if (shopOwnerId) {
-                    Metis.putData("admin/putShopOwner?id=" + shopOwnerId, postedData).then(function (data) {
-                        loadGridShopOwnerByData();
-                        showEditArea(false);
-                    });
-                } else {
-                    Metis.postData("admin/postShopOwner", postedData).then(function (data) {
-                        loadGridShopOwnerByData();
-                        showEditArea(false);
-                    });
-                }
-
-                function getPostedShopOwnerInput() {
-                    var param = {
-                        "fullName": document.getElementById('fullName').value,
-                        "phone": document.getElementById('phone').value,
-                        "emailAddress": document.getElementById('emailAddress').value,
-                        "password": document.getElementById('password').value,
-                        "confirmPassword": document.getElementById('confirmPassword').value
-                    };
-                    return param;
-                }
             });
             $('#dev-cancel-shop-owner').on('click', function (event) {
                 showEditArea(false);
@@ -1136,13 +1109,22 @@
             }
         }
 
-        $('#shopOwner-block-validate').validate({
+        $('#dev-shop-Owner-validate').validate({
             rules: {
                 fullName: "required",
                 phone: "required",
                 emailAddress: {
                     required: true,
                     email: true
+                },
+                password: {
+                    required: false,
+                    minlength: 5
+                },
+                confirmPassword: {
+                    required: false,
+                    minlength: 5,
+                    equalTo: "#password"
                 }
             },
             errorClass: 'help-block',
@@ -1152,6 +1134,35 @@
             },
             unhighlight: function unhighlight(element, errorClass, validClass) {
                 $(element).parents('.form-group').removeClass('has-error').addClass('has-success');
+            },
+            submitHandler: function submitHandler(form) {
+                var postedData = getPostedShopOwnerInput();
+
+                if (Metis.OwnerShop.Id) {
+                    Metis.putData("admin/putShopOwner", postedData).then(function (data) {
+                        loadGridShopOwnerByData();
+                        showEditArea(false);
+                    });
+                } else {
+                    Metis.postData("admin/postShopOwner", postedData).then(function (data) {
+                        loadGridShopOwnerByData();
+                        showEditArea(false);
+                    });
+                }
+                return false; // blocks regular submit since you have ajax
+
+                function getPostedShopOwnerInput() {
+                    var param = {
+                        "id": Metis.OwnerShop.Id || 0,
+                        "fullName": document.getElementById('fullName').value,
+                        "phone": document.getElementById('phone').value,
+                        "emailAddress": document.getElementById('emailAddress').value,
+                        "shopOwnerStatusId": 1,
+                        "password": document.getElementById('password').value,
+                        "confirmPassword": document.getElementById('confirmPassword').value
+                    };
+                    return param;
+                }
             }
         });
     };

@@ -60,6 +60,7 @@ class Functions {
 
 	static function GetNumberParam($request, $paramName, $length = 10) {					
 		$zeroResult = '0';
+		if (!isset($request) || !isset($paramName)) return $zeroResult;
 		if (!array_key_exists($paramName, $request)) return $zeroResult;
 
 		$param = $request[$paramName];
@@ -73,6 +74,7 @@ class Functions {
 
 	static function GetTextParam($request, $paramName, $length = 255) {					
 		$empty = '';
+		if (!isset($request) || !isset($paramName)) return $empty;
 		if (!array_key_exists($paramName, $request)) return $empty;
 
 		$param = $request[$paramName];
@@ -85,6 +87,7 @@ class Functions {
 
 	static function GetLongTextParam($request, $paramName) {
 		$empty = '';
+		if (!isset($request) || !isset($paramName)) return $empty;
 		if (!array_key_exists($paramName, $request)) return $empty;
 
 		$param = $request[$paramName];
