@@ -996,12 +996,41 @@
 
   return Metis;
 })(jQuery);
-"use strict";
+'use strict';
 
 ;(function ($) {
     "use strict";
 
     Metis.OwnerShop = function () {
+
+        var config = {
+            getListApi: 'admin/getShopOwners',
+            getDetailApi: 'admin/getShopOwner?id=',
+            putDetailApi: 'admin/putShopOwner',
+            postDetailApi: 'admin/postShopOwner',
+
+            gridId: 'dev-grid-shop-owner',
+            tableId: 'dev-shop-owner-datatable',
+            cancelBtnId: 'dev-cancel-shop-owner',
+            addBtnId: 'dev-add-shop-owner',
+            editAreaId: 'dev-edit-shop-owner-area',
+            formValidate: 'dev-shop-Owner-validate',
+
+            rowClass: 'row-shop-owner',
+            sortingClass: 'sortableTable',
+
+            defaultStatusId: 1,
+            model: {
+                id: 'Id',
+                fullName: 'FullName',
+                phone: 'Phone',
+                email: 'Email',
+                status: 'ShopOwnerStatusId',
+                password: 'Password',
+                confirmPassword: 'ConfirmPassword'
+            }
+
+        };
 
         init();
 
@@ -1012,24 +1041,17 @@
         }
 
         function loadGridShopOwnerByData() {
-            Metis.getData("admin/getShopOwners").then(function (data) {
+            Metis.getData(config.getListApi).then(function (data) {
                 showEditArea(false);
-
-                $('#dev-grid-shop-owner').html(loadGridShopOwner(data));
-
-                /*----------- BEGIN TABLESORTER CODE -------------------------*/
-                /* required jquery.tablesorter.min.js*/
-                $(".sortableTable").tablesorter();
-                /*----------- END TABLESORTER CODE -------------------------*/
-
-                /*----------- BEGIN datatable CODE -------------------------*/
-                $('#dev-shop-owner-datatable').dataTable({});
+                $('#' + config.gridId).html(loadGridShopOwner(data));
+                $('.' + config.sortingClass).tablesorter();
+                $('#' + config.tableId).dataTable({});
             });
         }
 
         function loadGridShopOwner(data) {
             var str = "";
-            str += '<table id="dev-shop-owner-datatable" class="table table-bordered table-hover">';
+            str += '<table id="' + config.tableId + '" class="table table-bordered table-hover">';
             str += '  <thead>';
             str += '    <tr>';
             str += '      <th>#</th>';
@@ -1042,12 +1064,12 @@
             str += '  <tbody>';
             for (var i = 0; i < data.length; i++) {
                 var shopOwner = data[i];
-                str += '    <tr class="row-shop-owner" id="' + shopOwner.Id + '">';
-                str += '      <td>' + shopOwner.Id + '</td>';
-                str += '      <td>' + shopOwner.FullName + '</td>';
-                str += '      <td>' + shopOwner.Phone + '</td>';
-                str += '      <td>' + shopOwner.Email + '</td>';
-                str += '      <td>' + shopOwner.ShopOwnerStatusId + '</td>';
+                str += '    <tr class="' + config.rowClass + '" id="' + shopOwner[config.model.id] + '">';
+                str += '      <td>' + shopOwner[config.model.id] + '</td>';
+                str += '      <td>' + shopOwner[config.model.fullName] + '</td>';
+                str += '      <td>' + shopOwner[config.model.phone] + '</td>';
+                str += '      <td>' + shopOwner[config.model.email] + '</td>';
+                str += '      <td>' + shopOwner[config.model.status] + '</td>';
                 str += '    </tr>';
             }
             str += '  </tbody>';
@@ -1058,7 +1080,7 @@
         function loadShopOwner(data) {
             fillValueInputControls(data);
             showEditArea(true);
-            $('#dev-cancel-shop-owner').text('Cancel Editing');
+            $('#' + config.cancelBtnId).text('Cancel Editing');
         }
 
         function registerOnSelectedShopOwner() {
