@@ -1026,6 +1026,7 @@
                 fullName: 'FullName',
                 phone: 'Phone',
                 email: 'Email',
+                dateUpdated: 'DateUpdated',
                 status: 'ShopOwnerStatusId',
                 password: 'Password',
                 confirmPassword: 'ConfirmPassword'
@@ -1043,10 +1044,12 @@
 
         function loadGridByData() {
             Metis.getData(config.getListApi).then(function (data) {
-                showEditArea(false);
+                showEditArea(false, 0);
                 $('#' + config.gridId).html(buildHtmlGrid(data));
-                $('.' + config.sortingClass).tablesorter();
-                $('#' + config.tableId).dataTable({});
+                //$('.' + config.sortingClass).tablesorter();            
+                $('#' + config.tableId).dataTable({
+                    "order": [[4, "asc"]]
+                });
             });
 
             function buildHtmlGrid(data) {
@@ -1058,6 +1061,7 @@
                 str += '      <th>Full Name</th>';
                 str += '      <th>Phone</th>';
                 str += '      <th>Email</th>';
+                str += '      <th>Date Updated</th>';
                 str += '      <th>Status</th> ';
                 str += '    </tr>';
                 str += '  </thead>';
@@ -1069,6 +1073,7 @@
                     str += '      <td>' + shopOwner[config.model.fullName] + '</td>';
                     str += '      <td>' + shopOwner[config.model.phone] + '</td>';
                     str += '      <td>' + shopOwner[config.model.email] + '</td>';
+                    str += '      <td>' + shopOwner[config.model.dateUpdated] + '</td>';
                     str += '      <td>' + shopOwner[config.model.status] + '</td>';
                     str += '    </tr>';
                 }
@@ -1082,7 +1087,7 @@
             $('#' + config.gridId).on('click', '.' + config.rowClass, onSelectRow);
 
             function onSelectRow() {
-                changeBackgroundOnSelectedRow();
+                changeBackgroundOnSelectedRow(this);
                 config.defaultId = Number(this.getAttribute("id"));
                 Metis.getData(config.getDetailApi + config.defaultId).then(function (rows) {
                     var rowData = rows && rows[0] || {};
@@ -1090,9 +1095,9 @@
                 });
             }
 
-            function changeBackgroundOnSelectedRow() {
+            function changeBackgroundOnSelectedRow(rowElement) {
                 $('.' + config.rowClass).css({ backgroundColor: '#fff' });
-                $(this).css({ backgroundColor: '#ddd' });
+                $(rowElement).css({ backgroundColor: '#ddd' });
             }
 
             function fillDataIntoDetailUI(data) {
@@ -1124,6 +1129,8 @@
         }
 
         function showEditArea(isShowed) {
+            var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
+
             if (isShowed) {
                 $('#' + config.editAreaId).show(100, function () {
                     //    $('html, body').animate({ scrollTop: $('#' + config.editAreaId).height() - 50 }, 1000);

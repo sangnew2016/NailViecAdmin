@@ -43,7 +43,7 @@ class Admin {
 
 	function getShopOwner($request) {		
 		$shopOwnerId = Functions::GetNumberParam($request, 'id');
-		$sql = "select * from NailShopOwner where Id = $shopOwnerId";
+		$sql = "select Id, ShopOwnerStatusId, FullName, Phone, Email from NailShopOwner where Id = $shopOwnerId";
 		$result = Data::Select($sql);
 		
 		$dataJson = json_encode($result);		
@@ -52,7 +52,9 @@ class Admin {
 
 	function getShopOwners($request) {		
 		//get data (convert json) here...
-		$sql = 'select * from NailShopOwner';
+		$sql = 'select Id, ShopOwnerStatusId, FullName, Phone, Email, DateUpdated 
+				from NailShopOwner
+				order by DateUpdated desc, Email, FullName';
 		$result = Data::Select($sql);
 		
 		$dataJson = json_encode($result);		
@@ -72,9 +74,10 @@ class Admin {
 		$emailAddress = Functions::GetTextParam($request, 'Email');
 		$password = Functions::GetTextParam($request, 'Password');
 		$confirmPassword = Functions::GetTextParam($request, 'ConfirmPassword');
-		
-		$sql = "insert into NailShopOwner(ShopOwnerStatusId, FullName, Phone, Email, Password) 
-			values($shopOwnerStatusId, '$fullName', '$phone', '$emailAddress', '$password')";
+		$dateUpdated = date("Y-m-d H:i:s");
+
+		$sql = "insert into NailShopOwner(ShopOwnerStatusId, FullName, Phone, Email, Password, DateUpdated) 
+			values($shopOwnerStatusId, '$fullName', '$phone', '$emailAddress', '$password', '$dateUpdated')";
 		
 		$result = Data::Query($sql);
 		
@@ -95,13 +98,15 @@ class Admin {
 		$emailAddress = Functions::GetTextParam($request, 'Email');
 		$password = Functions::GetTextParam($request, 'Password');
 		$confirmPassword = Functions::GetTextParam($request, 'ConfirmPassword');
-		
+		$dateUpdated = date("Y-m-d H:i:s");
+
 		$sql = "update NailShopOwner 
 				set ShopOwnerStatusId = $shopOwnerStatusId, 
 					FullName = '$fullName', 
 					Phone = '$phone', 
 					Email = '$emailAddress', 
-					Password = '$password' 
+					Password = '$password',
+					DateUpdated = '$dateUpdated' 
 				where Id = $id";
 		
 		$result = Data::Query($sql);
