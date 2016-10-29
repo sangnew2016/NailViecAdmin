@@ -83,16 +83,14 @@
         $('#' + config.cancelBtnId).text('Cancel Editing');                
     }
 
-    
-
     function registerOnSelectedShopOwner() {
-        $('#dev-grid-shop-owner').on('click', '.row-shop-owner', function(event) {
-            $('.row-shop-owner').css({backgroundColor: '#fff'});
+        $('#' + config.gridId).on('click', '.' + config.rowClass, function(event) {
+            $('.' + config.rowClass).css({backgroundColor: '#fff'});
             $(this).css({backgroundColor: '#ddd'});           
 
             var shopOwnerId = Number(this.getAttribute("id"));
             Metis.OwnerShop.Id = shopOwnerId;
-            Metis.getData("admin/getShopOwner?id=" + shopOwnerId).then(function(shopOwner) {
+            Metis.getData(config.getDetailApi + shopOwnerId).then(function(shopOwner) {
                 shopOwner = (shopOwner && shopOwner[0]) || {};
                 loadShopOwner(shopOwner);
             });             
@@ -100,57 +98,46 @@
     }
 
     function registerOnActionCommand() {
-        $('#dev-add-shop-owner').on('click', function(event) {
+        $('#' + config.addBtnId).on('click', function(event) {
             fillValueInputControls({});
             showEditArea(true);
             Metis.OwnerShop.Id = 0;
-            $('#dev-cancel-shop-owner').text('Cancel Adding');            
+            $('#' + config.cancelBtnId).text('Cancel Adding');            
         });      
-        $('#dev-cancel-shop-owner').on('click', function(event) {
+        $('#' + config.cancelBtnId).on('click', function(event) {
             showEditArea(false);            
         });   
     }
-
+    
     function fillValueInputControls(data) {
-        document.getElementById('fullName').value = data.FullName || '';
-        document.getElementById('phone').value = data.Phone || '';
-        document.getElementById('emailAddress').value = data.Email || '';
-        document.getElementById('password').value = '';
-        document.getElementById('confirmPassword').value = '';       
+        document.getElementById(config.model.fullName).value = data[config.model.fullName] || '';
+        document.getElementById(config.model.phone).value = data[config.model.phone] || '';
+        document.getElementById(config.model.email).value = data[config.model.email] || '';
+        document.getElementById(config.model.password).value = '';
+        document.getElementById(config.model.confirmPassword).value = '';       
     }
 
     function showEditArea(isShowed) {
         if (isShowed) {
-            $('#dev-edit-shop-owner-area').show(100, function() {
-                $('html, body').animate({ scrollTop: $('#dev-edit-shop-owner-area').height() - 50 }, 1000);
+            $('#' + config.editAreaId).show(100, function() {
+                $('html, body').animate({ scrollTop: $('#' + config.editAreaId).height() - 50 }, 1000);
             });
-            $('#dev-cancel-shop-owner').show();
+            $('#' + config.cancelBtnId).show();
         } else {
-            $('#dev-edit-shop-owner-area').hide(100, function() {
+            $('#' + config.editAreaId).hide(100, function() {
                 $('html, body').scrollTop();    
             }); 
-            $('#dev-cancel-shop-owner').hide();
+            $('#' + config.cancelBtnId).hide();
         }
     }
+    
+
+    //======================================
+    // UPDATE & INSERT
+    //======================================
 
     $('#dev-shop-Owner-validate').validate({
-        rules: {
-            fullName: "required",
-            phone: "required",
-            emailAddress: {
-                required: true,
-                email: true
-            },
-            password: {
-                required: false,
-                minlength: 5
-            },
-            confirmPassword: {
-                required: false,
-                minlength: 5,
-                equalTo: "#password"
-            }        
-        },
+        rules: setRule(),
         errorClass: 'help-block',
         errorElement: 'span',
         highlight: function(element, errorClass, validClass) {
@@ -159,36 +146,60 @@
         unhighlight: function(element, errorClass, validClass) {
             $(element).parents('.form-group').removeClass('has-error').addClass('has-success');
         },
-        submitHandler: function(form) {                    
-            var postedData = getPostedShopOwnerInput();
-
-            if(Metis.OwnerShop.Id){
-                Metis.putData("admin/putShopOwner", postedData).then(function(data) {
-                    loadGridShopOwnerByData();
-                    showEditArea(false);
-                });
-            }else{
-                Metis.postData("admin/postShopOwner", postedData).then(function(data) {
-                    loadGridShopOwnerByData();
-                    showEditArea(false);
-                });
-            }                
-            return false;  // blocks regular submit since you have ajax
-
-            function getPostedShopOwnerInput() {
-                var param = {
-                    "id": Metis.OwnerShop.Id || 0,
-                    "fullName": document.getElementById('fullName').value,
-                    "phone": document.getElementById('phone').value,
-                    "emailAddress": document.getElementById('emailAddress').value,
-                    "shopOwnerStatusId": 1,
-                    "password": document.getElementById('password').value,
-                    "confirmPassword": document.getElementById('confirmPassword').value
-                };
-                return param;
-            }
-        }
+        submitHandler: onSubmitHandler
     });
+
+    function setRule() {
+        var rule = {};
+
+        rule[config.model.fullName] = "required",
+        rule[config.model.phone] = "required",
+        rule[config.model.email] = {
+            required: true,
+            email: true
+        },
+        rule[config.model.password] = {
+            required: false,
+            minlength: 5
+        },
+        rule[config.model.confirmPassword] = {
+            required: false,
+            minlength: 5,
+            equalTo: "#" + config.model.password
+        }
+        return rule;
+    }
+
+    function onSubmitHandler(form) {                    
+        var postedData = getPostedShopOwnerInput();
+
+        if(Metis.OwnerShop.Id){
+            Metis.putData("admin/putShopOwner", postedData).then(function(data) {
+                loadGridShopOwnerByData();
+                showEditArea(false);
+            });
+        }else{
+            Metis.postData("admin/postShopOwner", postedData).then(function(data) {
+                loadGridShopOwnerByData();
+                showEditArea(false);
+            });
+        }                
+        return false;  // blocks regular submit since you have ajax
+
+        function getPostedShopOwnerInput() {
+            var param = {};
+            param[config.model.id] = Metis.OwnerShop.Id || 0,
+            param[config.model.fullName] = document.getElementById(config.model.fullName).value,
+            param[config.model.phone] = document.getElementById(config.model.phone).value,
+            param[config.model.email] = document.getElementById(config.model.email).value,
+            param[config.model.status] = config.defaultStatusId,
+            param[config.model.password] = document.getElementById(config.model.password).value,
+            param[config.model.confirmPassword] = document.getElementById(config.model.confirmPassword).value
+             
+            return param;
+        }    
+         
+    }
 };
   
 return Metis;

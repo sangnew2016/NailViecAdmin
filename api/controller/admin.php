@@ -66,12 +66,12 @@ class Admin {
 			return;
 		}
 		
-		$shopOwnerStatusId = Functions::GetNumberParam($request, 'shopOwnerStatusId');
-		$fullName = Functions::GetTextParam($request, 'fullName');
-		$phone = Functions::GetTextParam($request, 'phone');
-		$emailAddress = Functions::GetTextParam($request, 'emailAddress');
-		$password = Functions::GetTextParam($request, 'password');
-		$confirmPassword = Functions::GetTextParam($request, 'confirmPassword');
+		$shopOwnerStatusId = Functions::GetNumberParam($request, 'ShopOwnerStatusId');
+		$fullName = Functions::GetTextParam($request, 'FullName');
+		$phone = Functions::GetTextParam($request, 'Phone');
+		$emailAddress = Functions::GetTextParam($request, 'Email');
+		$password = Functions::GetTextParam($request, 'Password');
+		$confirmPassword = Functions::GetTextParam($request, 'ConfirmPassword');
 		
 		$sql = "insert into NailShopOwner(ShopOwnerStatusId, FullName, Phone, Email, Password) 
 			values($shopOwnerStatusId, '$fullName', '$phone', '$emailAddress', '$password')";
@@ -88,13 +88,13 @@ class Admin {
 			return;
 		}
 		
-		$id = Functions::GetNumberParam($request, 'id');
-		$shopOwnerStatusId = Functions::GetNumberParam($request, 'shopOwnerStatusId');
-		$fullName = Functions::GetTextParam($request, 'fullName');
-		$phone = Functions::GetTextParam($request, 'phone');
-		$emailAddress = Functions::GetTextParam($request, 'emailAddress');
-		$password = Functions::GetTextParam($request, 'password');
-		$confirmPassword = Functions::GetTextParam($request, 'confirmPassword');
+		$id = Functions::GetNumberParam($request, 'Id');
+		$shopOwnerStatusId = Functions::GetNumberParam($request, 'ShopOwnerStatusId');
+		$fullName = Functions::GetTextParam($request, 'FullName');
+		$phone = Functions::GetTextParam($request, 'Phone');
+		$emailAddress = Functions::GetTextParam($request, 'Email');
+		$password = Functions::GetTextParam($request, 'Password');
+		$confirmPassword = Functions::GetTextParam($request, 'ConfirmPassword');
 		
 		$sql = "update NailShopOwner 
 				set ShopOwnerStatusId = $shopOwnerStatusId, 
