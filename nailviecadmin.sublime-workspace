@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"Dat",
+				"DateUpdated"
+			],
+			[
+				"date",
+				"dateUpdated"
+			],
+			[
+				"post",
+				"postDetailApi"
+			],
+			[
+				"po",
+				"postedData"
+			],
+			[
+				"put",
+				"putDetailApi"
+			],
+			[
+				"for",
+				"formValidate"
+			],
+			[
 				"shop",
 				"shopOwnerId"
 			],
@@ -61,68 +85,19 @@
 			}
 		},
 		{
-			"contents": ";(function($){\n  \"use strict\";\n\n  Metis.OwnerShop = function() {\n\n    init();\n      \n    function init() {        \n        loadGridShopOwnerByData();\n        registerOnSelectedShopOwner();\n        registerOnActionCommand();\n    }\n\n    function loadGridShopOwnerByData() {\n        Metis.getData(\"admin/getShopOwners\").then(function(data) {\n            showEditArea(false);\n\n            $('#dev-grid-shop-owner').html(loadGridShopOwner(data));\n\n            /*----------- BEGIN TABLESORTER CODE -------------------------*/\n            /* required jquery.tablesorter.min.js*/\n            $(\".sortableTable\").tablesorter();\n            /*----------- END TABLESORTER CODE -------------------------*/\n\n            /*----------- BEGIN datatable CODE -------------------------*/\n            $('#dev-shop-owner-datatable').dataTable({\n\n            });\n        });\n    }\n\n    function loadGridShopOwner(data) {\n      var str = \"\"; \n      str += '<table id=\"dev-shop-owner-datatable\" class=\"table table-bordered table-hover\">';\n      str += '  <thead>';\n      str += '    <tr>';\n      str += '      <th>#</th>';\n      str += '      <th>Full Name</th>';\n      str += '      <th>Phone</th>';\n      str += '      <th>Email</th>';\n      str += '      <th>Status</th> ';                                \n      str += '    </tr>';\n      str += '  </thead>';\n      str += '  <tbody>';\n      for(var i = 0; i < data.length; i++) {\n        var shopOwner = data[i];\n        str += '    <tr class=\"row-shop-owner\" id=\"' + shopOwner.Id + '\">';\n        str += '      <td>' + shopOwner.Id + '</td>';\n        str += '      <td>' + shopOwner.FullName + '</td>';\n        str += '      <td>' + shopOwner.Phone + '</td>';\n        str += '      <td>' + shopOwner.Email + '</td>';\n        str += '      <td>' + shopOwner.ShopOwnerStatusId + '</td>';                                  \n        str += '    </tr>';\n      }                               \n      str += '  </tbody>';\n      str += '</table>';\n      return str;\n    }\n\n    function loadShopOwner(data) {\n        fillValueInputControls(data);       \n        showEditArea(true); \n        $('#dev-cancel-shop-owner').text('Cancel Editing');                \n    }\n\n    function registerOnSelectedShopOwner() {\n        $('#dev-grid-shop-owner').on('click', '.row-shop-owner', function(event) {\n            $('.row-shop-owner').css({backgroundColor: '#fff'});\n            $(this).css({backgroundColor: '#ddd'});           \n\n            var shopOwnerId = Number(this.getAttribute(\"id\"));\n            Metis.OwnerShop.Id = shopOwnerId;\n            Metis.getData(\"admin/getShopOwner?id=\" + shopOwnerId).then(function(shopOwner) {\n                shopOwner = (shopOwner && shopOwner[0]) || {};\n                loadShopOwner(shopOwner);\n            });             \n        });         \n    }\n\n    function registerOnActionCommand() {\n        $('#dev-add-shop-owner').on('click', function(event) {\n            fillValueInputControls({});\n            showEditArea(true);\n            Metis.OwnerShop.Id = 0;\n            $('#dev-cancel-shop-owner').text('Cancel Adding');            \n        });      \n        $('#dev-cancel-shop-owner').on('click', function(event) {\n            showEditArea(false);            \n        });   \n    }\n\n    function fillValueInputControls(data) {\n        document.getElementById('fullName').value = data.FullName || '';\n        document.getElementById('phone').value = data.Phone || '';\n        document.getElementById('emailAddress').value = data.Email || '';\n        document.getElementById('password').value = '';\n        document.getElementById('confirmPassword').value = '';       \n    }\n\n    function showEditArea(isShowed) {\n        if (isShowed) {\n            $('#dev-edit-shop-owner-area').show(100, function() {\n                $('html, body').animate({ scrollTop: $('#dev-edit-shop-owner-area').height() - 50 }, 1000);\n            });\n            $('#dev-cancel-shop-owner').show();\n        } else {\n            $('#dev-edit-shop-owner-area').hide(100, function() {\n                $('html, body').scrollTop();    \n            }); \n            $('#dev-cancel-shop-owner').hide();\n        }\n    }\n\n    $('#dev-shop-Owner-validate').validate({\n        rules: {\n            fullName: \"required\",\n            phone: \"required\",\n            emailAddress: {\n                required: true,\n                email: true\n            },\n            password: {\n                required: false,\n                minlength: 5\n            },\n            confirmPassword: {\n                required: false,\n                minlength: 5,\n                equalTo: \"#password\"\n            }        \n        },\n        errorClass: 'help-block',\n        errorElement: 'span',\n        highlight: function(element, errorClass, validClass) {\n            $(element).parents('.form-group').removeClass('has-success').addClass('has-error');\n        },\n        unhighlight: function(element, errorClass, validClass) {\n            $(element).parents('.form-group').removeClass('has-error').addClass('has-success');\n        },\n        submitHandler: function(form) {                    \n            var postedData = getPostedShopOwnerInput();\n\n            if(Metis.OwnerShop.Id){\n                Metis.putData(\"admin/putShopOwner\", postedData).then(function(data) {\n                    loadGridShopOwnerByData();\n                    showEditArea(false);\n                });\n            }else{\n                Metis.postData(\"admin/postShopOwner\", postedData).then(function(data) {\n                    loadGridShopOwnerByData();\n                    showEditArea(false);\n                });\n            }                \n            return false;  // blocks regular submit since you have ajax\n\n            function getPostedShopOwnerInput() {\n                var param = {\n                    \"id\": Metis.OwnerShop.Id || 0,\n                    \"fullName\": document.getElementById('fullName').value,\n                    \"phone\": document.getElementById('phone').value,\n                    \"emailAddress\": document.getElementById('emailAddress').value,\n                    \"shopOwnerStatusId\": 1,\n                    \"password\": document.getElementById('password').value,\n                    \"confirmPassword\": document.getElementById('confirmPassword').value\n                };\n                return param;\n            }\n        }\n    });\n};\n  \nreturn Metis;\n})(jQuery);\n",
 			"file": "client/src/js/app/metis_OwnerShop.js",
-			"file_size": 6566,
-			"file_write_time": 131215992453472000,
 			"settings":
 			{
-				"buffer_size": 6393,
+				"buffer_size": 7977,
 				"encoding": "UTF-8",
-				"line_ending": "Windows"
+				"line_ending": "Unix"
 			}
 		},
 		{
 			"file": "client/src/templates/pages/_ownershop.hbs",
 			"settings":
 			{
-				"buffer_size": 4145,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "client/public/_ownershop.html",
-			"settings":
-			{
-				"buffer_size": 42665,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "client/src/templates/layouts/default.hbs",
-			"settings":
-			{
-				"buffer_size": 4889,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "client/src/templates/data/module.json",
-			"settings":
-			{
-				"buffer_size": 4475,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "client/_config.yml",
-			"settings":
-			{
-				"buffer_size": 371,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "{\n  \"name\": \"bootstrap-admin-template\",\n  \"description\": \"Free Admin Template Based On Twitter Bootstrap 3.x\",\n  \"version\": \"2.4.1\",\n  \"homepage\": \"https://github.com/puikinsh/Bootstrap-Admin-Template\",\n  \"author\": \"puikinsh (http://github.com/puikinsh)\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/puikinsh/Bootstrap-Admin-Template.git\"\n  },\n  \"bugs\": {\n    \"url\": \"https://github.com/puikinsh/Bootstrap-Admin-Template/issues\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"twbs\",\n    \"assemble\",\n    \"gulp\",\n    \"less\",\n    \"admin\",\n    \"template\"\n  ],\n  \"main\": \"dist/core.js\",\n  \"style\": \"dist/main.css\",\n  \"files\": [\n    \"dist\"\n  ],\n  \"engines\": {\n    \"node\": \">=0.10.0\"\n  },\n  \"scripts\": {\n    \"preinstall\": \"bower install\",\n    \"clean\": \"./node_modules/.bin/rimraf public dist\",\n    \"assets\": \"./node_modules/.bin/gulp\",\n    \"pages\": \"./node_modules/.bin/assemble --file assemblefile.js\",\n    \"build\": \"npm run clean && npm run assets && npm run pages\",\n    \"mainrtldist\": \"rtlcss dist/main.css dist/main.rtl.css && csso dist/main.rtl.css dist/main.rtl.min.css\",\n    \"mainrtlpublic\": \"rtlcss dist/main.css public/assets/css/main.rtl.css && csso dist/main.rtl.css public/assets/css/main.rtl.min.css\",\n    \"bootstraprtl\": \"rtlcss node_modules/bootstrap/dist/css/bootstrap.css public/assets/lib/bootstrap/css/bootstrap.rtl.css\",\n    \"bootstraprtlmin\": \"csso public/assets/lib/bootstrap/css/bootstrap.rtl.css public/assets/lib/bootstrap/css/bootstrap.rtl.min.css\",\n    \"rtl\": \"npm run mainrtldist && npm run mainrtlpublic && npm run bootstraprtl && npm run bootstraprtlmin\",\n    \"buildrtl\": \"npm run build && npm run rtl\"\n  },\n  \"devDependencies\": {\n    \"assemble\": \"^0.17.1\",\n    \"babel-core\": \"^6.11.4\",\n    \"babel-preset-es2015\": \"^6.9.0\",\n    \"browser-sync\": \"^2.13.0\",\n    \"css-flip\": \"^0.5.0\",\n    \"del\": \"^2.2.1\",\n    \"gulp\": \"^3.9.1\",\n    \"gulp-autoprefixer\": \"^3.1.0\",\n    \"gulp-babel\": \"^6.1.2\",\n    \"gulp-concat\": \"^2.6.0\",\n    \"gulp-cssnano\": \"^2.1.2\",\n    \"gulp-extname\": \"^0.2.2\",\n    \"gulp-format-md\": \"^0.1.9\",\n    \"gulp-header\": \"^1.8.7\",\n    \"gulp-if\": \"^2.0.1\",\n    \"gulp-less\": \"^3.1.0\",\n    \"gulp-load-plugins\": \"^1.2.4\",\n    \"gulp-open\": \"^2.0.0\",\n    \"gulp-rename\": \"^1.2.2\",\n    \"gulp-size\": \"^2.1.0\",\n    \"gulp-uglify\": \"^2.0.0\",\n    \"handlebars-helpers\": \"^0.7.3\",\n    \"helper-markdown\": \"^0.2.1\",\n    \"helper-md\": \"^0.2.1\",\n    \"noty\": \"^2.3.8\",\n    \"rtlcss\": \"^2.0.6\"\n  },\n  \"dependencies\": {\n    \"animate.css\": \"^3.5.1\",\n    \"bootstrap\": \"^3.3.7\",\n    \"cleave.js\": \"^0.7.7\",\n    \"clipboard\": \"^1.5.12\",\n    \"font-awesome\": \"^4.6.3\",\n    \"fullcalendar\": \"^3.0.0\",\n    \"gmaps\": \"^0.4.24\",\n    \"jquery\": \"2.2.4\",\n    \"jquery-validation\": \"^1.15.1\",\n    \"jquery-ui\": \"~1.12.1\",\n    \"datatables.net\": \"~1.10.12\",\n    \"datatables.net-dt\": \"~1.10.12\",\n    \"tablesorter\": \"~2.26.2\",\n    \"metismenu\": \"^2.5.2\",\n    \"screenfull\": \"^3.0.0\"\n  },\n  \"verb\": {\n    \"toc\": true,\n    \"tasks\": [\n      \"readme\"\n    ],\n    \"plugins\": [\n      \"gulp-format-md\"\n    ]\n  }\n}\n",
-			"file": "client/package.json",
-			"file_size": 2982,
-			"file_write_time": 131216028679701000,
-			"settings":
-			{
-				"buffer_size": 3012,
+				"buffer_size": 4266,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -131,16 +106,17 @@
 			"file": "api/controller/admin.php",
 			"settings":
 			{
-				"buffer_size": 6677,
+				"buffer_size": 6952,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/xampp/htdocs/backup/nailviecadmin_old/assets/javascript/index.js",
+			"file": "api/startup.php",
 			"settings":
 			{
-				"buffer_size": 6974,
+				"buffer_size": 105,
+				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		}
@@ -194,13 +170,6 @@
 		"/C/xampp/htdocs/nailviecadmin/api/config",
 		"/C/xampp/htdocs/nailviecadmin/api/controller",
 		"/C/xampp/htdocs/nailviecadmin/client",
-		"/C/xampp/htdocs/nailviecadmin/client/node_modules/datatables.net-dt",
-		"/C/xampp/htdocs/nailviecadmin/client/node_modules/datatables.net-dt/css",
-		"/C/xampp/htdocs/nailviecadmin/client/node_modules/is-odd",
-		"/C/xampp/htdocs/nailviecadmin/client/node_modules/jquery/dist",
-		"/C/xampp/htdocs/nailviecadmin/client/node_modules/jquery-ui/build/tasks",
-		"/C/xampp/htdocs/nailviecadmin/client/public/assets",
-		"/C/xampp/htdocs/nailviecadmin/client/public/assets/lib",
 		"/C/xampp/htdocs/nailviecadmin/client/src",
 		"/C/xampp/htdocs/nailviecadmin/client/src/templates",
 		"/C/xampp/htdocs/nailviecadmin/client/src/templates/data",
@@ -209,6 +178,12 @@
 	],
 	"file_history":
 	[
+		"/C/Users/Administrator/Downloads/TEMP/20161028/20161028/src/js/app/metis_OwnerShop.js",
+		"/C/xampp/htdocs/backup/nailviecadmin_old/assets/javascript/index.js",
+		"/C/xampp/htdocs/nailviecadmin/client/_config.yml",
+		"/C/xampp/htdocs/nailviecadmin/client/src/templates/layouts/default.hbs",
+		"/C/xampp/htdocs/nailviecadmin/client/public/_ownershop.html",
+		"/C/xampp/htdocs/nailviecadmin/client/package.json",
 		"/C/xampp/htdocs/nailviecadmin/client/src/tasks/connect.js",
 		"/C/xampp/htdocs/nailviecadmin/client/gulpfile.babel.js",
 		"/C/xampp/htdocs/nailviecadmin/api/common/functions.php",
@@ -291,6 +266,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"loadGridByData",
+			"putShopOwner",
+			"dev-shop-Owner-validate",
+			"registerOnSelectedShopOwner",
+			"Metis.OwnerShop.Id",
+			"loadShopOwner",
+			"loadGridShopOwner",
+			"loadGridShopOwnerByData",
 			"config",
 			"assets",
 			"relativeUrls",
@@ -316,6 +299,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"config.defaultId",
+			"loadGridByData"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -326,7 +311,7 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -356,7 +341,7 @@
 						"translation.y": 1069.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -365,15 +350,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6393,
+						"buffer_size": 7977,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6279,
-								6279
+								2191,
+								2191
 							]
 						],
 						"settings":
@@ -383,10 +368,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 720.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -395,15 +380,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4145,
+						"buffer_size": 4266,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								709,
-								709
+								524,
+								541
 							]
 						],
 						"settings":
@@ -413,175 +398,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 45.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "client/public/_ownershop.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 42665,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2032,
-								2052
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 11183.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "client/src/templates/layouts/default.hbs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4889,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2942,
-								2956
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1530.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "client/src/templates/data/module.json",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 4475,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": -0.0,
-						"translation.y": 1386.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "client/_config.yml",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 371,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								148,
-								148
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/YAML/YAML.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "client/package.json",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3012,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2834,
-								2834
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 945.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
+					"buffer": 3,
 					"file": "api/controller/admin.php",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6677,
+						"buffer_size": 6952,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3560,
-								3560
+								1893,
+								1893
 							]
 						],
 						"settings":
@@ -590,39 +427,38 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1155.0,
+						"translation.y": 375.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "/C/xampp/htdocs/backup/nailviecadmin_old/assets/javascript/index.js",
+					"buffer": 4,
+					"file": "api/startup.php",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6974,
+						"buffer_size": 105,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								281,
-								313
+								41,
+								41
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/PHP/PHP.sublime-syntax"
 						},
-						"translation.x": -0.0,
-						"translation.y": 45.0,
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -671,7 +507,7 @@
 	"project": "nailviecadmin.sublime-project",
 	"replace":
 	{
-		"height": 42.0
+		"height": 62.0
 	},
 	"save_all_on_build": true,
 	"select_file":

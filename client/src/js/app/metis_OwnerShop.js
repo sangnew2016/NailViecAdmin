@@ -27,7 +27,8 @@
             phone: 'Phone',
             email: 'Email',
             dateUpdated: 'DateUpdated',
-            status: 'ShopOwnerStatusId',
+            statusId: 'ShopOwnerStatusId',
+            statusName: 'ShopOwnerStatusName',
             password: 'Password',
             confirmPassword: 'ConfirmPassword'
         }
@@ -43,7 +44,7 @@
     }
 
     function loadGridByData() {
-        Metis.getData(config.getListApi).then(function(data) {
+        Metis.data.get(config.getListApi).then(function(data) {
             showEditArea(false, 0);
             $('#' + config.gridId).html(buildHtmlGrid(data));        
             //$('.' + config.sortingClass).tablesorter();            
@@ -74,7 +75,7 @@
                 str += '      <td>' + shopOwner[config.model.phone] + '</td>';
                 str += '      <td>' + shopOwner[config.model.email] + '</td>';
                 str += '      <td>' + shopOwner[config.model.dateUpdated] + '</td>';
-                str += '      <td>' + shopOwner[config.model.status] + '</td>';                                  
+                str += '      <td>' + shopOwner[config.model.statusName] + '</td>';                                  
                 str += '    </tr>';
             }                               
             str += '  </tbody>';
@@ -89,7 +90,7 @@
         function onSelectRow() {
             changeBackgroundOnSelectedRow(this);                     
             config.defaultId = Number(this.getAttribute("id"));             
-            Metis.getData(config.getDetailApi + config.defaultId).then(function(rows) {
+            Metis.data.get(config.getDetailApi + config.defaultId).then(function(rows) {
                 var rowData = (rows && rows[0]) || {};
                 fillDataIntoDetailUI(rowData);
             });    
@@ -125,7 +126,10 @@
         document.getElementById(config.model.phone).value = data[config.model.phone] || '';
         document.getElementById(config.model.email).value = data[config.model.email] || '';
         document.getElementById(config.model.password).value = '';
-        document.getElementById(config.model.confirmPassword).value = '';       
+        document.getElementById(config.model.confirmPassword).value = '';
+
+        //render combobox
+        Metis.data.ownerShop.renderSelectDOMByStatus(data[config.model.statusId], config.model.statusId);       
     }
 
     function showEditArea(isShowed, delay = 100) {
@@ -185,12 +189,12 @@
         var postedData = getParameters();
 
         if (config.defaultId){
-            Metis.putData(config.putDetailApi, postedData).then(function(data) {
+            Metis.data.put(config.putDetailApi, postedData).then(function(data) {
                 loadGridByData();
                 showEditArea(false);
             });
         } else { 
-            Metis.postData(config.postDetailApi, postedData).then(function(data) {
+            Metis.data.post(config.postDetailApi, postedData).then(function(data) {
                 loadGridByData();
                 showEditArea(false);
             });
@@ -202,11 +206,17 @@
             param[config.model.id] = config.defaultId || 0,
             param[config.model.fullName] = document.getElementById(config.model.fullName).value,
             param[config.model.phone] = document.getElementById(config.model.phone).value,
-            param[config.model.email] = document.getElementById(config.model.email).value,
-            param[config.model.status] = config.defaultStatusId,
+            param[config.model.email] = document.getElementById(config.model.email).value,            
             param[config.model.password] = document.getElementById(config.model.password).value,
             param[config.model.confirmPassword] = document.getElementById(config.model.confirmPassword).value
-             
+            
+            if(config.defaultId) {
+                var selectedValue = $('#' + config.model.statusId + ' select').find(":selected").val();
+                param[config.model.statusId] = selectedValue;
+            } else {
+                param[config.model.statusId] = config.defaultStatusId;
+            }   
+
             return param;
         }    
          

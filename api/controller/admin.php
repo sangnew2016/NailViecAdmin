@@ -22,7 +22,7 @@ class Admin {
 		$result = true;			
 		$result = $result && !Functions::ProcessApi('admin/getAreas', 'GET', $this, 'getAreas');
 		$result = $result && !Functions::ProcessApi('admin/getShopsByAreas', 'GET', $this, 'getShopsByAreas');
-
+		$result = $result && !Functions::ProcessApi('admin/getShopOwnerStatus', 'GET', $this, 'getShopOwnerStatus');
 		
 		$result = $result && !Functions::ProcessApi('admin/getShopOwners', 'GET', $this, 'getShopOwners');
 		$result = $result && !Functions::ProcessApi('admin/getShopOwner', 'GET', $this, 'getShopOwner');
@@ -52,14 +52,22 @@ class Admin {
 
 	function getShopOwners($request) {		
 		//get data (convert json) here...
-		$sql = 'select Id, ShopOwnerStatusId, FullName, Phone, Email, DateUpdated 
-				from NailShopOwner
-				order by DateUpdated desc, Email, FullName';
+		$sql = 'select NS.Id, NS.ShopOwnerStatusId, NS.FullName, NS.Phone, NS.Email, NS.DateUpdated, NSS.Name as ShopOwnerStatusName 
+				from NailShopOwner NS inner join ShopOwnerStatus NSS on NS.ShopOwnerStatusId = NSS.Id 
+				order by NS.DateUpdated desc, NS.Email, NS.FullName';
 		$result = Data::Select($sql);
 		
 		$dataJson = json_encode($result);		
 		echo $dataJson;		
 	}
+
+	function getShopOwnerStatus() {				
+		$sql = "select Id, Name from ShopOwnerStatus";
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}	
 
 	function postShopOwner($request) {
 		$message = $this->validateShopOwner($request);
