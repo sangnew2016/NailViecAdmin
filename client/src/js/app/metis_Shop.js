@@ -34,10 +34,14 @@
             statusName: 'ShopStatusName',
             ownerName: 'ShopOwnerName',
             ownerPhone: 'ShopOwnerPhone',
-            ownerEmail: 'ShopOwnerEmail'            
+            ownerEmail: 'ShopOwnerEmail',
+            addressMap: 'mapByAddress',
+            addressMapLatDefault: -12.043333,
+            addressMapLngDefault: -77.028333            
         }
         
     };
+    var addressMap;
 
     init();
       
@@ -92,13 +96,14 @@
 
     function registerOnSelectedRow() {
         $('#' + config.gridId).on('click', '.' + config.rowClass, onSelectRow);
+        $('#' + config.model.address).on('input', onChangeAddressMap);
 
         function onSelectRow() {
             changeBackgroundOnSelectedRow(this);                     
             config.defaultId = Number(this.getAttribute("id"));             
             Metis.data.get(config.getDetailApi + config.defaultId).then(function(rows) {
                 var rowData = (rows && rows[0]) || {};
-                fillDataIntoDetailUI(rowData);
+                fillDataIntoDetailUI(rowData);        
             });    
         }
 
@@ -111,7 +116,30 @@
             fillValueInputControls(data);       
             showEditArea(true); 
             $('#' + config.cancelBtnId).text('Cancel Editing');                
-        }         
+        }
+
+        function onChangeAddressMap(e) {
+            e.preventDefault();
+            GMaps.geocode({
+                address: $('#' + config.model.address).val().trim(),
+                callback: function(results, status) {
+                    if (status === 'OK') {
+                        var latlng = results[0].geometry.location;
+                        if(!addressMap) {
+                           alert('AddressMap is not initilized yet');
+                           return;    
+                        }
+
+                        addressMap.setCenter(latlng.lat(), latlng.lng());
+                        addressMap.addMarker({
+                            lat: latlng.lat(),
+                            lng: latlng.lng(),
+                            title: $('#' + config.model.name).val() || '' 
+                        });
+                    }
+                }
+            });
+        }        
     }
 
     function registerOnActionCommand() {
@@ -137,6 +165,18 @@
         Metis.data.shop.renderSelectDOMByStatus(data[config.model.statusId], config.model.statusId);       
         Metis.data.shop.renderSelectDOMByArea(data[config.model.areaId], config.model.areaId);
         Metis.data.shop.renderSelectDOMByShopOwner(data[config.model.ownerId], config.model.ownerId);
+        
+        //render googlemap
+        addressMap = new GMaps({
+            el: '#' + config.model.addressMap,
+            lat: data[config.model.latitude] || config.model.addressMapLatDefault,
+            lng: data[config.model.longtitude] || config.model.addressMapLngDefault
+        });
+        addressMap.addMarker({
+            lat: data[config.model.latitude] || config.model.addressMapLatDefault,
+            lng: data[config.model.longtitude] || config.model.addressMapLngDefault,
+            title: data[config.model.name] || ''            
+        });
     }
 
     function showEditArea(isShowed, delay = 100) {
@@ -225,6 +265,7 @@
         }    
          
     }
+    
 };
   
 return Metis;
