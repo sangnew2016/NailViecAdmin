@@ -131,6 +131,48 @@
         }
     };
 
+    data.shop = {
+        renderSelectDOMByStatus: function(statusId, elementId) {            
+            data.get('admin/getShopStatus').then(function(data) {                 
+                var s = '<select class="form form-control">';
+                for (var i = 0; i < data.length; i++) {
+                    var selected = Number(data[i].Id) === Number(statusId) ? 'selected' : '';
+
+                    s += '<option value="' + data[i].Id + '" ' + selected + '>' + data[i].Name + '</option>';
+                }    
+                s += '</select>';    
+                
+                document.getElementById(elementId).innerHTML = s; 
+            });            
+        },
+        renderSelectDOMByArea: function(statusId, elementId) {            
+            data.get('admin/getAreasBySelectDom').then(function(data) {                 
+                var s = '<select class="form form-control">';
+                for (var i = 0; i < data.length; i++) {
+                    var selected = Number(data[i].Id) === Number(statusId) ? 'selected' : '';
+
+                    s += '<option value="' + data[i].Id + '" ' + selected + '>' + data[i].Name + '</option>';
+                }    
+                s += '</select>';    
+                
+                document.getElementById(elementId).innerHTML = s; 
+            });            
+        },
+        renderSelectDOMByShopOwner: function(statusId, elementId) {            
+            data.get('admin/getShopOwnerBySelectDom').then(function(data) {                 
+                var s = '<select class="form form-control">';
+                for (var i = 0; i < data.length; i++) {
+                    var selected = Number(data[i].Id) === Number(statusId) ? 'selected' : '';
+
+                    s += '<option value="' + data[i].Id + '" ' + selected + '>' + data[i].Name + '</option>';
+                }    
+                s += '</select>';    
+                
+                document.getElementById(elementId).innerHTML = s; 
+            });            
+        },
+    };
+
 
 
     //========================================================

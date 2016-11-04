@@ -1,13 +1,13 @@
 ;(function($){
   "use strict";
 
-  Metis.OwnerShop = function() {
+  Metis.Shop = function() {
 
     var config = {
-        getListApi: 'admin/getShopOwners',
-        getDetailApi: 'admin/getShopOwner?id=',
-        putDetailApi: 'admin/putShopOwner',
-        postDetailApi: 'admin/postShopOwner',
+        getListApi: 'admin/getShopList',
+        getDetailApi: 'admin/getShopItem?id=',
+        putDetailApi: 'admin/putShopItem',
+        postDetailApi: 'admin/postShopItem',
 
         gridId: 'dev-grid-shop-owner',
         tableId: 'dev-shop-owner-datatable',
@@ -16,21 +16,25 @@
         editAreaId: 'dev-edit-shop-owner-area',
         formValidate: 'dev-shop-Owner-validate',
 
-        rowClass: 'row-shop-owner',
+        rowClass: 'row-shop',
         sortingClass: 'sortableTable',
 
         defaultId: 0,
         defaultStatusId: 1,
         model: {
             id: 'Id',
-            fullName: 'FullName',
-            phone: 'Phone',
-            email: 'Email',
-            dateUpdated: 'DateUpdated',
-            statusId: 'ShopOwnerStatusId',
-            statusName: 'ShopOwnerStatusName',
-            password: 'Password',
-            confirmPassword: 'ConfirmPassword'
+            name: 'ShopName',
+            address: 'ShopAddress',
+            longtitude: 'Longtitude',
+            latitude: 'Latitude',
+            statusId: 'ShopStatusId',
+            ownerId: 'ShopOwnerId',
+            areaId: 'AreaId',
+
+            statusName: 'ShopStatusName',
+            ownerName: 'ShopOwnerName',
+            ownerPhone: 'ShopOwnerPhone',
+            ownerEmail: 'ShopOwnerEmail'            
         }
         
     };
@@ -49,7 +53,7 @@
             $('#' + config.gridId).html(buildHtmlGrid(data));        
             //$('.' + config.sortingClass).tablesorter();            
             $('#' + config.tableId).dataTable({
-                "order": [[ 4, "asc" ]]
+                "order": [[ 1, "asc" ]]
             });
         });
 
@@ -59,11 +63,12 @@
             str += '  <thead>';
             str += '    <tr>';
             str += '      <th>#</th>';
-            str += '      <th>Full Name</th>';
-            str += '      <th>Phone</th>';
-            str += '      <th>Email</th>';
-            str += '      <th>Date Updated</th>';
-            str += '      <th>Status</th> ';                                
+            str += '      <th>Shop Name</th>';
+            str += '      <th>Address</th>';
+            str += '      <th>Owner Name</th>';
+            str += '      <th>Owner Phone</th>';
+            str += '      <th>Owner Email</th> ';                                
+            str += '      <th>Status</th>';
             str += '    </tr>';
             str += '  </thead>';
             str += '  <tbody>';
@@ -71,10 +76,11 @@
                 var shopOwner = data[i];
                 str += '    <tr class="' + config.rowClass + '" id="' + shopOwner[config.model.id] + '">';
                 str += '      <td>' + shopOwner[config.model.id] + '</td>';
-                str += '      <td>' + shopOwner[config.model.fullName] + '</td>';
-                str += '      <td>' + shopOwner[config.model.phone] + '</td>';
-                str += '      <td>' + shopOwner[config.model.email] + '</td>';
-                str += '      <td>' + shopOwner[config.model.dateUpdated] + '</td>';
+                str += '      <td>' + shopOwner[config.model.name] + '</td>';
+                str += '      <td>' + shopOwner[config.model.address] + '</td>';
+                str += '      <td>' + shopOwner[config.model.ownerName] + '</td>';
+                str += '      <td>' + shopOwner[config.model.ownerPhone] + '</td>';
+                str += '      <td>' + shopOwner[config.model.ownerEmail] + '</td>';                
                 str += '      <td>' + shopOwner[config.model.statusName] + '</td>';                                  
                 str += '    </tr>';
             }                               
@@ -122,14 +128,15 @@
     }
     
     function fillValueInputControls(data) {
-        document.getElementById(config.model.fullName).value = data[config.model.fullName] || '';
-        document.getElementById(config.model.phone).value = data[config.model.phone] || '';
-        document.getElementById(config.model.email).value = data[config.model.email] || '';
-        document.getElementById(config.model.password).value = '';
-        document.getElementById(config.model.confirmPassword).value = '';
+        document.getElementById(config.model.name).value = data[config.model.name] || '';
+        document.getElementById(config.model.address).value = data[config.model.address] || '';
+        document.getElementById(config.model.longtitude).value = data[config.model.longtitude] || '';
+        document.getElementById(config.model.latitude).value = data[config.model.latitude] || '';            
 
         //render combobox
-        Metis.data.ownerShop.renderSelectDOMByStatus(data[config.model.statusId], config.model.statusId);       
+        Metis.data.shop.renderSelectDOMByStatus(data[config.model.statusId], config.model.statusId);       
+        Metis.data.shop.renderSelectDOMByArea(data[config.model.areaId], config.model.areaId);
+        Metis.data.shop.renderSelectDOMByShopOwner(data[config.model.ownerId], config.model.ownerId);
     }
 
     function showEditArea(isShowed, delay = 100) {
@@ -166,22 +173,14 @@
 
     function setRule() {
         var rule = {};
+        rule[config.model.name] = "required";
+        rule[config.model.address] = "required";
+        rule[config.model.longtitude] = "required";
+        rule[config.model.latitude] = "required";
+        //rule[config.model.shopStatusId] = "required";
+        //rule[config.model.shopOwnerId] = "required";
+        //rule[config.model.areaId] = "required";    
 
-        rule[config.model.fullName] = "required";
-        rule[config.model.phone] = "required";
-        rule[config.model.email] = {
-            required: true,
-            email: true
-        };
-        rule[config.model.password] = {
-            required: false,
-            minlength: 5
-        };
-        rule[config.model.confirmPassword] = {
-            required: false,
-            minlength: 5,
-            equalTo: "#" + config.model.password
-        };
         return rule;
     }
 
@@ -204,16 +203,21 @@
         function getParameters() {
             var param = {};
             param[config.model.id] = config.defaultId || 0;
-            param[config.model.fullName] = document.getElementById(config.model.fullName).value;
-            param[config.model.phone] = document.getElementById(config.model.phone).value;
-            param[config.model.email] = document.getElementById(config.model.email).value;            
-            param[config.model.password] = document.getElementById(config.model.password).value;
-            param[config.model.confirmPassword] = document.getElementById(config.model.confirmPassword).value;
+            param[config.model.name] = document.getElementById(config.model.name).value;
+            param[config.model.address] = document.getElementById(config.model.address).value;
+            param[config.model.longtitude] = document.getElementById(config.model.longtitude).value;
+            param[config.model.latitude] = document.getElementById(config.model.latitude).value;
+
+            var selectedValueStatus = $('#' + config.model.statusId + ' select').find(":selected").val();
+            param[config.model.statusId] = selectedValueStatus;    
+
+            var selectedValueOwner = $('#' + config.model.ownerId + ' select').find(":selected").val();
+            param[config.model.ownerId] = selectedValueOwner;
+
+            var selectedValueArea = $('#' + config.model.areaId + ' select').find(":selected").val();
+            param[config.model.areaId] = selectedValueArea;
             
-            if(config.defaultId) {
-                var selectedValue = $('#' + config.model.statusId + ' select').find(":selected").val();
-                param[config.model.statusId] = selectedValue;
-            } else {
+            if(!config.defaultId) {                
                 param[config.model.statusId] = config.defaultStatusId;
             }   
 

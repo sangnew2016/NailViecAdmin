@@ -20,14 +20,25 @@
 class Admin {
 	public function __construct() {				
 		$result = true;			
-		$result = $result && !Functions::ProcessApi('admin/getAreas', 'GET', $this, 'getAreas');
-		$result = $result && !Functions::ProcessApi('admin/getShopsByAreas', 'GET', $this, 'getShopsByAreas');
+		//$result = $result && !Functions::ProcessApi('admin/getAreas', 'GET', $this, 'getAreas');
+		//$result = $result && !Functions::ProcessApi('admin/getShopsByAreas', 'GET', $this, 'getShopsByAreas');
+		
+		$result = $result && !Functions::ProcessApi('admin/getShopStatus', 'GET', $this, 'getShopStatus');
 		$result = $result && !Functions::ProcessApi('admin/getShopOwnerStatus', 'GET', $this, 'getShopOwnerStatus');
+		$result = $result && !Functions::ProcessApi('admin/getAreasBySelectDom', 'GET', $this, 'getAreasBySelectDom');
+		$result = $result && !Functions::ProcessApi('admin/getShopOwnerBySelectDom', 'GET', $this, 'getShopOwnerBySelectDom');
+		
 		
 		$result = $result && !Functions::ProcessApi('admin/getShopOwners', 'GET', $this, 'getShopOwners');
 		$result = $result && !Functions::ProcessApi('admin/getShopOwner', 'GET', $this, 'getShopOwner');
 		$result = $result && !Functions::ProcessApi('admin/postShopOwner', 'POST', $this, 'postShopOwner');
 		$result = $result && !Functions::ProcessApi('admin/putShopOwner', 'PUT', $this, 'putShopOwner');
+
+		$result = $result && !Functions::ProcessApi('admin/getShopList', 'GET', $this, 'getShopList');
+		$result = $result && !Functions::ProcessApi('admin/getShopItem', 'GET', $this, 'getShopItem');
+		$result = $result && !Functions::ProcessApi('admin/postShopItem', 'POST', $this, 'postShopItem');
+		$result = $result && !Functions::ProcessApi('admin/putShopItem', 'PUT', $this, 'putShopItem');
+
 
 		$result = $result && !Functions::ProcessApi('admin/getShop', 'GET', $this, 'getShop');	
 		$result = $result && !Functions::ProcessApi('admin/saveAdd', 'POST', $this, 'saveAddNews');
@@ -41,20 +52,23 @@ class Admin {
 	}
 	
 
-	function getShopOwner($request) {		
-		$shopOwnerId = Functions::GetNumberParam($request, 'id');
-		$sql = "select Id, ShopOwnerStatusId, FullName, Phone, Email from NailShopOwner where Id = $shopOwnerId";
+	//=============================================
+	// ShopOwner
+	//=============================================	
+	function getShopOwners($request) {		
+		//get data (convert json) here...
+		$sql = 'select NS.Id, NS.ShopOwnerStatusId, NS.FullName, NS.Phone, NS.Email, NS.DateUpdated, NSS.Name as ShopOwnerStatusName 
+				from NailShopOwner NS inner join ShopOwnerStatus NSS on NS.ShopOwnerStatusId = NSS.Id 
+				order by NS.DateUpdated desc, NS.Email, NS.FullName';
 		$result = Data::Select($sql);
 		
 		$dataJson = json_encode($result);		
 		echo $dataJson;		
 	}
 
-	function getShopOwners($request) {		
-		//get data (convert json) here...
-		$sql = 'select NS.Id, NS.ShopOwnerStatusId, NS.FullName, NS.Phone, NS.Email, NS.DateUpdated, NSS.Name as ShopOwnerStatusName 
-				from NailShopOwner NS inner join ShopOwnerStatus NSS on NS.ShopOwnerStatusId = NSS.Id 
-				order by NS.DateUpdated desc, NS.Email, NS.FullName';
+	function getShopOwner($request) {		
+		$shopOwnerId = Functions::GetNumberParam($request, 'id');
+		$sql = "select Id, ShopOwnerStatusId, FullName, Phone, Email from NailShopOwner where Id = $shopOwnerId";
 		$result = Data::Select($sql);
 		
 		$dataJson = json_encode($result);		
@@ -121,6 +135,144 @@ class Admin {
 		
 		echo $result;
 	}
+
+	//=============================================
+	// Shop
+	//=============================================
+	function getShopList($request) {		
+		//get data (convert json) here...
+		$sql = 'select NS.Id, NS.ShopStatusId, SS.Name as ShopStatusName, NS.ShopName, NS.ShopAddress, 
+					NSO.FullName as ShopOwnerName, NSO.Phone as ShopOwnerPhone, NSO.Email as ShopOwnerEmail
+				from NailShops NS inner join NailShopOwner NSO on NS.ShopOwnerId = NSO.Id
+					inner join ShopStatus SS on SS.Id = NS.ShopStatusId
+				order by NS.ShopName, NSO.FullName, NSO.Email';
+
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
+
+	function getShopItem($request) {		
+		$shopId = Functions::GetNumberParam($request, 'id');
+		$sql = "select Id, ShopStatusId, ShopName, ShopAddress, AreaId, Longtitude, Latitude, ShopOwnerId
+				from NailShops 
+				where Id = $shopId";
+
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
+
+	function getShopStatus() {				
+		$sql = "select Id, Name from ShopStatus";
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
+
+	function getAreasBySelectDom() {				
+		$sql = "select Id, Name from Areas";
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
+
+	function getShopOwnerBySelectDom() {
+		$sql = "select Id, CONCAT(FullName, ' (', Email, ')') as Name from nailshopowner";
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
+
+	function postShopItem($request) {
+		//$message = $this->validateShop($request);
+		//if (strlen($message) > 0) {
+		//	echo $message;
+		//	return;
+		//}
+		
+		$shopStatusId = Functions::GetNumberParam($request, 'ShopStatusId');
+		$shopOwnerId = Functions::GetNumberParam($request, 'ShopOwnerId');
+		$areaId = Functions::GetNumberParam($request, 'AreaId');
+
+		$shopName = Functions::GetTextParam($request, 'ShopName');
+		$shopAddress = Functions::GetTextParam($request, 'ShopAddress');		
+		$longtitude = Functions::GetTextParam($request, 'Longtitude');
+		$latitude = Functions::GetTextParam($request, 'Latitude');	
+		$dateUpdated = date("Y-m-d H:i:s");
+
+		$sql = "insert into NailShops(AreaId, ShopOwnerId, ShopStatusId, ShopName, ShopAddress, DateUpdated) 
+			values($areaId, $shopOwnerId, $shopStatusId, '$shopName', '$shopAddress', '$dateUpdated')";
+		
+		$result = Data::Query($sql);
+		
+		echo $result;
+	}
+
+	function putShopItem($request) {
+		//$message = $this->validateShop($request);
+		//if (strlen($message) > 0) {
+		//	echo $message;
+		//	return;
+		//}
+		
+		$id = Functions::GetNumberParam($request, 'Id');
+		$shopStatusId = Functions::GetNumberParam($request, 'ShopStatusId');
+		$shopOwnerId = Functions::GetNumberParam($request, 'ShopOwnerId');
+		$areaId = Functions::GetNumberParam($request, 'AreaId');
+
+		$shopName = Functions::GetTextParam($request, 'ShopName');
+		$shopAddress = Functions::GetTextParam($request, 'ShopAddress');		
+		$longtitude = Functions::GetTextParam($request, 'Longtitude');
+		$latitude = Functions::GetTextParam($request, 'Latitude');	
+		$dateUpdated = date("Y-m-d H:i:s");
+
+		$sql = "update NailShops 
+				set ShopStatusId = $shopStatusId, 
+					ShopOwnerId = $shopOwnerId, 
+					AreaId = $areaId, 
+					ShopName = '$shopName', 
+					ShopAddress = '$shopAddress', 
+					Longtitude = '$longtitude',
+					Latitude = '$latitude',
+					DateUpdated = '$dateUpdated' 
+				where Id = $id";
+		
+		$result = Data::Query($sql);
+		
+		echo $result;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	function validateShopOwner($request) {
 		return '';
