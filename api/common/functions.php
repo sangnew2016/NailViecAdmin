@@ -96,6 +96,29 @@ class Functions {
 		$value = trim(strip_tags($param));
 		return $value;
 	}
+
+	static function SaveGoogleMapIntoImage($latitude, $longtitude, $prefix) {		
+		$fileName = '_' . Functions::udate("Y-m-d_H-i-s_u") . '_' . $prefix . '.png';
+		$filePath = "output/googlemap/$fileName";	
+
+		$link = "http://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longtitude&zoom=13&size=960x640&markers=color:blue%7Clabel:S%7C$latitude,$longtitude&sensor=false"; 	
+		
+		if (@copy($link, $filePath)) {
+			return $fileName;
+		} else {
+			return ""; 
+		}		
+	}
+
+	static function udate($format = 'u', $utimestamp = null) {
+        if (is_null($utimestamp))
+            $utimestamp = microtime(true);
+
+        $timestamp = floor($utimestamp);
+        $milliseconds = round(($utimestamp - $timestamp) * 1000000);
+
+        return date(preg_replace('`(?<!\\\\)u`', $milliseconds, $format), $timestamp);
+    }
 }
 
 ?>

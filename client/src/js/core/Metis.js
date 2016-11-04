@@ -76,12 +76,19 @@
 
         $.ajax({                
             url: apiUrl + url,            
-            data: data,
+            data: data, 
             success: function(data) {
                 try {
                     var json = JSON.parse(data);
                     defer.resolve(json);
                 } catch(ex) {
+                    if (data.indexOf('@error') >= 0) {
+                        defer.reject(data);
+
+                        var message = data.replace('@error:', '');
+                        alert(message);
+                        return;                        
+                    }
                     defer.resolve(data);
                 }                                    
             },
@@ -104,6 +111,13 @@
                     var json = JSON.parse(data);
                     defer.resolve(json);
                 } catch(ex) {
+                    if (data.indexOf('@error') >= 0) {
+                        defer.reject(data);
+                        
+                        var message = data.replace('@error:', '');
+                        alert(message);
+                        return;                        
+                    }
                     defer.resolve(data);
                 }                                    
             },

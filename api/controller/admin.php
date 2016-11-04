@@ -213,8 +213,15 @@ class Admin {
 		$latitude = Functions::GetTextParam($request, 'Latitude');	
 		$dateUpdated = date("Y-m-d H:i:s");
 
-		$sql = "insert into NailShops(AreaId, ShopOwnerId, ShopStatusId, ShopName, ShopAddress, DateUpdated) 
-			values($areaId, $shopOwnerId, $shopStatusId, N'$shopName', N'$shopAddress', '$dateUpdated')";
+		//save googlemap as Image		
+		$fileName = Functions::SaveGoogleMapIntoImage($latitude, $longtitude, 'shop');
+		if (strlen($fileName) <= 0) {
+			echo '@error:Cannot save file googlemap into server. Please try it again!';
+			return;
+		}
+
+		$sql = "insert into NailShops(AreaId, ShopOwnerId, ShopStatusId, ShopName, ShopAddress, FileName, DateUpdated) 
+			values($areaId, $shopOwnerId, $shopStatusId, N'$shopName', N'$shopAddress', '$fileName', '$dateUpdated')";
 		
 		$result = Data::Query($sql);
 		
@@ -239,6 +246,13 @@ class Admin {
 		$latitude = Functions::GetTextParam($request, 'Latitude');	
 		$dateUpdated = date("Y-m-d H:i:s");
 
+		//save googlemap as Image		
+		$fileName = Functions::SaveGoogleMapIntoImage($latitude, $longtitude, 'shop');
+		if (strlen($fileName) > 0) {
+			echo '@error:Cannot save file googlemap into server. Please try it again!';
+			return;
+		}
+		
 		$sql = "update NailShops 
 				set ShopStatusId = $shopStatusId, 
 					ShopOwnerId = $shopOwnerId, 
@@ -247,11 +261,12 @@ class Admin {
 					ShopAddress = N'$shopAddress', 
 					Longtitude = '$longtitude',
 					Latitude = '$latitude',
+					FileName = '$fileName',
 					DateUpdated = '$dateUpdated' 
 				where Id = $id";
 		
 		$result = Data::Query($sql);
-		
+
 		echo $result;
 	}
 
