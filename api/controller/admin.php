@@ -27,7 +27,9 @@ class Admin {
 		$result = $result && !Functions::ProcessApi('admin/getShopOwnerStatus', 'GET', $this, 'getShopOwnerStatus');
 		$result = $result && !Functions::ProcessApi('admin/getAreasBySelectDom', 'GET', $this, 'getAreasBySelectDom');
 		$result = $result && !Functions::ProcessApi('admin/getShopOwnerBySelectDom', 'GET', $this, 'getShopOwnerBySelectDom');
-		
+		$result = $result && !Functions::ProcessApi('admin/getJobStatus', 'GET', $this, 'getJobStatus');
+		$result = $result && !Functions::ProcessApi('admin/getShopBySelectDom', 'GET', $this, 'getShopBySelectDom');
+
 		
 		$result = $result && !Functions::ProcessApi('admin/getShopOwners', 'GET', $this, 'getShopOwners');
 		$result = $result && !Functions::ProcessApi('admin/getShopOwner', 'GET', $this, 'getShopOwner');
@@ -38,6 +40,11 @@ class Admin {
 		$result = $result && !Functions::ProcessApi('admin/getShopItem', 'GET', $this, 'getShopItem');
 		$result = $result && !Functions::ProcessApi('admin/postShopItem', 'POST', $this, 'postShopItem');
 		$result = $result && !Functions::ProcessApi('admin/putShopItem', 'PUT', $this, 'putShopItem');
+
+		$result = $result && !Functions::ProcessApi('admin/getJobList', 'GET', $this, 'getJobList');
+		$result = $result && !Functions::ProcessApi('admin/getJobItem', 'GET', $this, 'getJobItem');
+		$result = $result && !Functions::ProcessApi('admin/postJobItem', 'POST', $this, 'postJobItem');
+		$result = $result && !Functions::ProcessApi('admin/putJobItem', 'PUT', $this, 'putJobItem');
 
 
 		$result = $result && !Functions::ProcessApi('admin/getShop', 'GET', $this, 'getShop');	
@@ -99,7 +106,7 @@ class Admin {
 		$dateUpdated = date("Y-m-d H:i:s");
 
 		$sql = "insert into NailShopOwner(ShopOwnerStatusId, FullName, Phone, Email, Password, DateUpdated) 
-			values($shopOwnerStatusId, '$fullName', '$phone', '$emailAddress', '$password', '$dateUpdated')";
+			values($shopOwnerStatusId, N'$fullName', '$phone', '$emailAddress', '$password', '$dateUpdated')";
 		
 		$result = Data::Query($sql);
 		
@@ -124,7 +131,7 @@ class Admin {
 
 		$sql = "update NailShopOwner 
 				set ShopOwnerStatusId = $shopOwnerStatusId, 
-					FullName = '$fullName', 
+					FullName = N'$fullName', 
 					Phone = '$phone', 
 					Email = '$emailAddress', 
 					Password = '$password',
@@ -145,7 +152,7 @@ class Admin {
 					NSO.FullName as ShopOwnerName, NSO.Phone as ShopOwnerPhone, NSO.Email as ShopOwnerEmail
 				from NailShops NS inner join NailShopOwner NSO on NS.ShopOwnerId = NSO.Id
 					inner join ShopStatus SS on SS.Id = NS.ShopStatusId
-				order by NS.ShopName, NSO.FullName, NSO.Email';
+				order by NS.DateUpdated desc, NS.ShopName, NSO.FullName, NSO.Email';
 
 		$result = Data::Select($sql);
 		
@@ -207,7 +214,7 @@ class Admin {
 		$dateUpdated = date("Y-m-d H:i:s");
 
 		$sql = "insert into NailShops(AreaId, ShopOwnerId, ShopStatusId, ShopName, ShopAddress, DateUpdated) 
-			values($areaId, $shopOwnerId, $shopStatusId, '$shopName', '$shopAddress', '$dateUpdated')";
+			values($areaId, $shopOwnerId, $shopStatusId, N'$shopName', N'$shopAddress', '$dateUpdated')";
 		
 		$result = Data::Query($sql);
 		
@@ -236,8 +243,8 @@ class Admin {
 				set ShopStatusId = $shopStatusId, 
 					ShopOwnerId = $shopOwnerId, 
 					AreaId = $areaId, 
-					ShopName = '$shopName', 
-					ShopAddress = '$shopAddress', 
+					ShopName = N'$shopName', 
+					ShopAddress = N'$shopAddress', 
 					Longtitude = '$longtitude',
 					Latitude = '$latitude',
 					DateUpdated = '$dateUpdated' 
@@ -248,8 +255,106 @@ class Admin {
 		echo $result;
 	}
 
+	//=============================================
+	// Job
+	//=============================================
+	function getJobList($request) {		
+		//get data (convert json) here...
+		$sql = 'select J.Id, J.JobStatusId, JS.Name as JobStatusName, NS.ShopName, 
+					J.Title, J.Body, J.PhoneContact, J.Salary 					
+				from Jobs J inner join NailShops NS on J.NailShopId = NS.Id
+					inner join JobStatus JS on JS.Id = J.JobStatusId
+				order by J.DateUpdated desc, J.Title';
 
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
 
+	function getJobItem($request) {		
+		$jobId = Functions::GetNumberParam($request, 'id');
+		$sql = "select Id, JobStatusId, NailShopId, Title, Body, PhoneContact, Salary 
+				from Jobs 
+				where Id = $jobId";
+
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
+
+	function getJobStatus() {				
+		$sql = "select Id, Name from JobStatus";
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
+	
+	function getShopBySelectDom() {
+		$sql = "select Id, CONCAT(ShopName, ' (', ShopAddress, ')') as Name from nailshops";
+		$result = Data::Select($sql);
+		
+		$dataJson = json_encode($result);		
+		echo $dataJson;		
+	}
+
+	function postJobItem($request) {
+		//$message = $this->validateShop($request);
+		//if (strlen($message) > 0) {
+		//	echo $message;
+		//	return;
+		//}
+		
+		$jobStatusId = Functions::GetNumberParam($request, 'JobStatusId');
+		$shopId = Functions::GetNumberParam($request, 'NailShopId');		
+
+		$title = Functions::GetTextParam($request, 'Title');
+		$body = Functions::GetTextParam($request, 'Body');		
+		$phoneContact = Functions::GetTextParam($request, 'PhoneContact');
+		$salary = Functions::GetTextParam($request, 'Salary');	
+		$dateUpdated = date("Y-m-d H:i:s");
+
+		$sql = "insert into Jobs(JobStatusId, NailShopId, Title, Body, PhoneContact, Salary, DateUpdated) 
+			values($jobStatusId, $shopId, N'$title', N'$body', N'$phoneContact', N'$salary', '$dateUpdated')";
+
+		$result = Data::Query($sql);
+		
+		echo $result;
+	}
+
+	function putJobItem($request) {
+		//$message = $this->validateShop($request);
+		//if (strlen($message) > 0) {
+		//	echo $message;
+		//	return;
+		//}
+		
+		$id = Functions::GetNumberParam($request, 'Id');
+		$jobStatusId = Functions::GetNumberParam($request, 'JobStatusId');
+		$shopId = Functions::GetNumberParam($request, 'NailShopId');		
+
+		$title = Functions::GetTextParam($request, 'Title');
+		$body = Functions::GetTextParam($request, 'Body');		
+		$phoneContact = Functions::GetTextParam($request, 'PhoneContact');
+		$salary = Functions::GetTextParam($request, 'Salary');	
+		$dateUpdated = date("Y-m-d H:i:s");
+
+		$sql = "update Jobs 
+				set JobStatusId = $jobStatusId, 
+					NailShopId = $shopId, 
+					Title = N'$title', 
+					Body = N'$body', 
+					PhoneContact = N'$phoneContact',
+					Salary = N'$salary',
+					DateUpdated = '$dateUpdated' 
+				where Id = $id";
+		
+		$result = Data::Query($sql);
+		
+		echo $result;
+	}
 
 
 

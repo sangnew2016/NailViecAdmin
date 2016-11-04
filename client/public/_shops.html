@@ -8,7 +8,7 @@
     <!--Mobile first-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Table</title>
+    <title>Shop</title>
     
     <meta name="description" content="Free Admin Template Based On Twitter Bootstrap 3.x">
     <meta name="author" content="">
@@ -130,7 +130,7 @@
                                 <ul class="nav navbar-nav">
                                     <li><a href="dashboard.html">Dashboard</a></li>
                                     
-                                    <!--li class="active"><a href="table.html">Tables</a></li-->
+                                    <!--li><a href="table.html">Tables</a></li-->
                                     <!--li><a href="file.html">File Manager</a></li-->
                                     <!--li class='dropdown '>
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -167,7 +167,7 @@
                             <div class="main-bar">
                                 <h3>
               <i class="fa fa-table"></i>&nbsp;
-            Table
+            Shop
           </h3>
                             </div>
                             <!-- /.main-bar -->
@@ -221,8 +221,8 @@
                                   </li>
                         
                                   <li class="">
-                                    <a href="_news.html">
-                                      <i class="fa fa-pencil"></i><span class="link-title">&nbsp;News</span>
+                                    <a href="_jobs.html">
+                                      <i class="fa fa-pencil"></i><span class="link-title">&nbsp;Jobs</span>
                                     </a>
                                   </li>
                         
@@ -539,27 +539,38 @@
                 <div id="content">
                     <div class="outer">
                         <div class="inner bg-light lter">
-                            <!--Begin Datatables-->
+                            <style>
+    .form-control.col-lg-6 {
+        width: 50% !important;
+    }
+    .button-add-shop-owner {
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+    .row-shop-owner {
+        cursor: pointer;
+    }
+
+    .dataTables_paginate a {
+        padding-left: 15px;
+        cursor: pointer;
+    }
+</style>
+
+<!--Begin Datatables-->
 <div class="row">
   <div class="col-lg-12">
         <div class="box">
             <header>
                 <div class="icons"><i class="fa fa-table"></i></div>
-                <h5>Dynamic Table</h5>
+                <h5>Nail Shop</h5>
             </header>
-            <div id="collapse4" class="body">
-                <table id="dataTable" class="table table-bordered table-condensed table-hover table-striped">
-                    <thead>
-                    <tr>
-                        <th>Rendering engine</th>
-                        <th>Browser</th>
-                        <th>Platform(s)</th>
-                        <th>Engine version</th>
-                        <th>CSS grade</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>                </table>
+            <div id="dev-grid-shop-owner" class="body">
+               <!-- generate grid-->
+            </div>
+            <div class="button-add-shop-owner">
+                <button class="btn btn-primary" id="dev-add-shop-owner">Add Shop</button> 
+                <button class="btn btn-default" id="dev-cancel-shop-owner">Cancel</button>               
             </div>
         </div>
     </div>
@@ -568,6 +579,92 @@
 <!--End Datatables-->
 
 
+
+<div class="row" id="dev-edit-shop-owner-area" style="display:none">
+    <div class="col-lg-12">
+        <div class="box">
+            <header>
+                <div class="icons"><i class="fa fa-th-large"></i></div>
+                <h5>Edit Area</h5>
+                <!-- .toolbar -->
+            <div class="toolbar">
+              <nav style="padding: 8px;">
+                  <a href="javascript:;" class="btn btn-default btn-xs collapse-box">
+                      <i class="fa fa-minus"></i>
+                  </a>
+                  <a href="javascript:;" class="btn btn-default btn-xs full-box">
+                      <i class="fa fa-expand"></i>
+                  </a>
+                  <a href="javascript:;" class="btn btn-danger btn-xs close-box">
+                      <i class="fa fa-times"></i>
+                  </a>
+              </nav>
+            </div>            <!-- /.toolbar -->
+
+            </header>
+            <div id="collapseOne" class="body">
+                <form class="form-horizontal" id="dev-shop-Owner-validate">
+
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Shop Name</label>
+                        <div class="col-lg-7">
+                            <input type="text" id="ShopName" name="ShopName" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Shop Address</label>
+                        <div class="col-lg-7">
+                            <input type="text" id="ShopAddress" name="ShopAddress" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Longtitude</label>
+                        <div class="col-lg-4">
+                            <input type="text" id="Longtitude" name="Longtitude" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Latitude</label>
+                        <div class="col-lg-4">
+                            <input type="text" id="Latitude" name="Latitude" class="form-control">
+                        </div>
+                    </div>
+                   
+
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Status</label>
+
+                        <div class="col-lg-4" id="ShopStatusId" name="ShopStatusId">
+                            <!-- generate combo -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Area</label>
+
+                        <div class="col-lg-4" id="AreaId" name="AreaId">
+                            <!-- generate combo -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Shop Owner</label>
+
+                        <div class="col-lg-7" id="ShopOwnerId" name="ShopOwnerId">
+                            <!-- generate combo -->
+                        </div>
+                    </div>
+                    
+
+                    <div class="form-actions no-margin-bottom">
+                        <input type="submit" class="btn btn-primary" value="Save Shop" />
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
 
                         </div>
                         <!-- /.inner -->
@@ -667,11 +764,8 @@
             <!--jQuery -->
             <script src="assets/lib/jquery/jquery.js"></script>
 
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.6/js/jquery.tablesorter.min.js"></script>
-                    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
 
             <!--Bootstrap -->
             <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
@@ -688,8 +782,7 @@
 
                 <script>
                     $(function() {
-                      Metis.MetisTable();
-                      Metis.metisSortable();
+                      Metis.Shop();
                     });
                 </script>
 

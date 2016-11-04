@@ -1,13 +1,13 @@
 ;(function($){
   "use strict";
 
-  Metis.Shop = function() {
+  Metis.Jobs = function() {
 
     var config = {
-        getListApi: 'admin/getShopList',
-        getDetailApi: 'admin/getShopItem?id=',
-        putDetailApi: 'admin/putShopItem',
-        postDetailApi: 'admin/postShopItem',
+        getListApi: 'admin/getJobList',
+        getDetailApi: 'admin/getJobItem?id=',
+        putDetailApi: 'admin/putJobItem',
+        postDetailApi: 'admin/postJobItem',
 
         gridId: 'dev-grid-shop-owner',
         tableId: 'dev-shop-owner-datatable',
@@ -23,18 +23,15 @@
         defaultStatusId: 1,
         model: {
             id: 'Id',
-            name: 'ShopName',
-            address: 'ShopAddress',
-            longtitude: 'Longtitude',
-            latitude: 'Latitude',
-            statusId: 'ShopStatusId',
-            ownerId: 'ShopOwnerId',
-            areaId: 'AreaId',
+            title: 'Title',
+            body: 'Body',
+            phoneContact: 'PhoneContact',
+            salary: 'Salary',
+            statusId: 'JobStatusId',
+            shopId: 'NailShopId',            
 
-            statusName: 'ShopStatusName',
-            ownerName: 'ShopOwnerName',
-            ownerPhone: 'ShopOwnerPhone',
-            ownerEmail: 'ShopOwnerEmail'            
+            statusName: 'JobStatusName',
+            shopName: 'ShopName'                    
         }
         
     };
@@ -52,9 +49,7 @@
             showEditArea(false, 0);
             $('#' + config.gridId).html(buildHtmlGrid(data));        
             //$('.' + config.sortingClass).tablesorter();            
-            $('#' + config.tableId).dataTable({
-                "order": [[ 1, "asc" ]]
-            });
+            $('#' + config.tableId).dataTable();
         });
 
         function buildHtmlGrid(data) {
@@ -64,10 +59,9 @@
             str += '    <tr>';
             str += '      <th>#</th>';
             str += '      <th>Shop Name</th>';
-            str += '      <th>Address</th>';
-            str += '      <th>Owner Name</th>';
-            str += '      <th>Owner Phone</th>';
-            str += '      <th>Owner Email</th> ';                                
+            str += '      <th>Title</th>';
+            str += '      <th>Phone Contact</th>';
+            str += '      <th>Salary</th>';            
             str += '      <th>Status</th>';
             str += '    </tr>';
             str += '  </thead>';
@@ -76,12 +70,11 @@
                 var shopOwner = data[i];
                 str += '    <tr class="' + config.rowClass + '" id="' + shopOwner[config.model.id] + '">';
                 str += '      <td>' + shopOwner[config.model.id] + '</td>';
-                str += '      <td>' + shopOwner[config.model.name] + '</td>';
-                str += '      <td>' + shopOwner[config.model.address] + '</td>';
-                str += '      <td>' + shopOwner[config.model.ownerName] + '</td>';
-                str += '      <td>' + shopOwner[config.model.ownerPhone] + '</td>';
-                str += '      <td>' + shopOwner[config.model.ownerEmail] + '</td>';                
-                str += '      <td>' + shopOwner[config.model.statusName] + '</td>';                                  
+                str += '      <td>' + shopOwner[config.model.shopName] + '</td>';
+                str += '      <td>' + shopOwner[config.model.title] + '</td>';
+                str += '      <td>' + shopOwner[config.model.phoneContact] + '</td>';
+                str += '      <td>' + shopOwner[config.model.salary] + '</td>';
+                str += '      <td>' + shopOwner[config.model.statusName] + '</td>';                                
                 str += '    </tr>';
             }                               
             str += '  </tbody>';
@@ -128,15 +121,14 @@
     }
     
     function fillValueInputControls(data) {
-        document.getElementById(config.model.name).value = data[config.model.name] || '';
-        document.getElementById(config.model.address).value = data[config.model.address] || '';
-        document.getElementById(config.model.longtitude).value = data[config.model.longtitude] || '';
-        document.getElementById(config.model.latitude).value = data[config.model.latitude] || '';            
+        document.getElementById(config.model.title).value = data[config.model.title] || '';
+        document.getElementById(config.model.body).value = data[config.model.body] || '';
+        document.getElementById(config.model.phoneContact).value = data[config.model.phoneContact] || '';
+        document.getElementById(config.model.salary).value = data[config.model.salary] || '';            
 
         //render combobox
-        Metis.data.shop.renderSelectDOMByStatus(data[config.model.statusId], config.model.statusId);       
-        Metis.data.shop.renderSelectDOMByArea(data[config.model.areaId], config.model.areaId);
-        Metis.data.shop.renderSelectDOMByShopOwner(data[config.model.ownerId], config.model.ownerId);
+        Metis.data.job.renderSelectDOMByStatus(data[config.model.statusId], config.model.statusId);               
+        Metis.data.job.renderSelectDOMByShop(data[config.model.shopId], config.model.shopId);
     }
 
     function showEditArea(isShowed, delay = 100) {
@@ -173,10 +165,10 @@
 
     function setRule() {
         var rule = {};
-        rule[config.model.name] = "required";
-        rule[config.model.address] = "required";
-        rule[config.model.longtitude] = "required";
-        rule[config.model.latitude] = "required";
+        rule[config.model.title] = "required";
+        rule[config.model.body] = "required";
+        rule[config.model.phoneContact] = "required";
+        rule[config.model.salary] = "required";
         //rule[config.model.shopStatusId] = "required";
         //rule[config.model.shopOwnerId] = "required";
         //rule[config.model.areaId] = "required";    
@@ -203,20 +195,17 @@
         function getParameters() {
             var param = {};
             param[config.model.id] = config.defaultId || 0;
-            param[config.model.name] = document.getElementById(config.model.name).value;
-            param[config.model.address] = document.getElementById(config.model.address).value;
-            param[config.model.longtitude] = document.getElementById(config.model.longtitude).value;
-            param[config.model.latitude] = document.getElementById(config.model.latitude).value;
+            param[config.model.title] = document.getElementById(config.model.title).value;
+            param[config.model.body] = document.getElementById(config.model.body).value;
+            param[config.model.phoneContact] = document.getElementById(config.model.phoneContact).value;
+            param[config.model.salary] = document.getElementById(config.model.salary).value;
 
             var selectedValueStatus = $('#' + config.model.statusId + ' select').find(":selected").val();
             param[config.model.statusId] = selectedValueStatus;    
 
-            var selectedValueOwner = $('#' + config.model.ownerId + ' select').find(":selected").val();
-            param[config.model.ownerId] = selectedValueOwner;
-
-            var selectedValueArea = $('#' + config.model.areaId + ' select').find(":selected").val();
-            param[config.model.areaId] = selectedValueArea;
-            
+            var selectedValueShop = $('#' + config.model.shopId + ' select').find(":selected").val();
+            param[config.model.shopId] = selectedValueShop;
+           
             if(!config.defaultId) {                
                 param[config.model.statusId] = config.defaultStatusId;
             }   

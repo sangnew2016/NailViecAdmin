@@ -129,6 +129,77 @@
         }
     };
 
+    data.shop = {
+        renderSelectDOMByStatus: function renderSelectDOMByStatus(statusId, elementId) {
+            data.get('admin/getShopStatus').then(function (data) {
+                var s = '<select class="form form-control">';
+                for (var i = 0; i < data.length; i++) {
+                    var selected = Number(data[i].Id) === Number(statusId) ? 'selected' : '';
+
+                    s += '<option value="' + data[i].Id + '" ' + selected + '>' + data[i].Name + '</option>';
+                }
+                s += '</select>';
+
+                document.getElementById(elementId).innerHTML = s;
+            });
+        },
+        renderSelectDOMByArea: function renderSelectDOMByArea(statusId, elementId) {
+            data.get('admin/getAreasBySelectDom').then(function (data) {
+                var s = '<select class="form form-control">';
+                for (var i = 0; i < data.length; i++) {
+                    var selected = Number(data[i].Id) === Number(statusId) ? 'selected' : '';
+
+                    s += '<option value="' + data[i].Id + '" ' + selected + '>' + data[i].Name + '</option>';
+                }
+                s += '</select>';
+
+                document.getElementById(elementId).innerHTML = s;
+            });
+        },
+        renderSelectDOMByShopOwner: function renderSelectDOMByShopOwner(statusId, elementId) {
+            data.get('admin/getShopOwnerBySelectDom').then(function (data) {
+                var s = '<select class="form form-control">';
+                for (var i = 0; i < data.length; i++) {
+                    var selected = Number(data[i].Id) === Number(statusId) ? 'selected' : '';
+
+                    s += '<option value="' + data[i].Id + '" ' + selected + '>' + data[i].Name + '</option>';
+                }
+                s += '</select>';
+
+                document.getElementById(elementId).innerHTML = s;
+            });
+        }
+    };
+
+    data.job = {
+        renderSelectDOMByStatus: function renderSelectDOMByStatus(statusId, elementId) {
+            data.get('admin/getJobStatus').then(function (data) {
+                var s = '<select class="form form-control">';
+                for (var i = 0; i < data.length; i++) {
+                    var selected = Number(data[i].Id) === Number(statusId) ? 'selected' : '';
+
+                    s += '<option value="' + data[i].Id + '" ' + selected + '>' + data[i].Name + '</option>';
+                }
+                s += '</select>';
+
+                document.getElementById(elementId).innerHTML = s;
+            });
+        },
+        renderSelectDOMByShop: function renderSelectDOMByShop(statusId, elementId) {
+            data.get('admin/getShopBySelectDom').then(function (data) {
+                var s = '<select class="form form-control">';
+                for (var i = 0; i < data.length; i++) {
+                    var selected = Number(data[i].Id) === Number(statusId) ? 'selected' : '';
+
+                    s += '<option value="' + data[i].Id + '" ' + selected + '>' + data[i].Name + '</option>';
+                }
+                s += '</select>';
+
+                document.getElementById(elementId).innerHTML = s;
+            });
+        }
+    };
+
     //========================================================
     // CUSTOM: end
     //========================================================

@@ -38,9 +38,6 @@
     </style>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap.min.css">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.css">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.theme.min.css">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jQuery-Validation-Engine/2.6.4/validationEngine.jquery.min.css">
 
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -54,7 +51,7 @@
         less = {
             env: "development",
             relativeUrls: false,
-            rootpath: "/assets/"
+            rootpath: "assets/"
         };
     </script>
     <link rel="stylesheet" href="../assets/css/style-switcher.css">
@@ -551,6 +548,18 @@
     .form-control.col-lg-6 {
         width: 50% !important;
     }
+    .button-add-shop-owner {
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+    .row-shop-owner {
+        cursor: pointer;
+    }
+
+    .dataTables_paginate a {
+        padding-left: 15px;
+        cursor: pointer;
+    }
 </style>
 
 <!--Begin Datatables-->
@@ -562,30 +571,11 @@
                 <h5>Owner Shop</h5>
             </header>
             <div id="dev-grid-shop-owner" class="body">
-                <table id="ownerShopDataTable" class="table table-bordered table-condensed table-hover table-striped">
-                    <thead>
-                    <tr>
-                        <th>Rendering engine</th>
-                        <th>Browser</th>
-                        <th>Platform(s)</th>
-                        <th>Engine version</th>
-                        <th>CSS grade</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    
-                       
-                            <tr>
-                                <td>aaa</td>
-                                <td>bbb</td>
-                                <td>cxcc</td>
-                                <td>ddd</td>
-                                <td>eee</td>
-                            </tr>
-                        
-                    
-                    </tbody>
-                </table>
+               <!-- generate grid-->
+            </div>
+            <div class="button-add-shop-owner">
+                <button class="btn btn-primary" id="dev-add-shop-owner">Add Shop-Owner</button> 
+                <button class="btn btn-default" id="dev-cancel-shop-owner">Cancel</button>               
             </div>
         </div>
     </div>
@@ -595,7 +585,7 @@
 
 
 
-<div class="row">
+<div class="row" id="dev-edit-shop-owner-area" style="display:none">
     <div class="col-lg-12">
         <div class="box">
             <header>
@@ -618,44 +608,51 @@
 
             </header>
             <div id="collapseOne" class="body">
-                <form action="#" class="form-horizontal" id="shopOwner-block-validate">
+                <form class="form-horizontal" id="dev-shop-Owner-validate">
 
                     <div class="form-group">
                         <label class="control-label col-lg-4">Full Name</label>
                         <div class="col-lg-4">
-                            <input type="text" id="fullName" name="fullName" class="form-control">
+                            <input type="text" id="FullName" name="FullName" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-4">Phone</label>
                         <div class="col-lg-4">
-                            <input type="text" id="phone" name="phone" class="form-control">
+                            <input type="text" id="Phone" name="Phone" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-4">E-mail</label>
 
                         <div class="col-lg-4">
-                            <input type="email" id="emailAddress" name="emailAddress" class="form-control">
+                            <input type="email" id="Email" name="Email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Status</label>
+
+                        <div class="col-lg-4" id="ShopOwnerStatusId" name="ShopOwnerStatusId">
+                            <!-- generate combo -->
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-4">Password</label>
 
                         <div class="col-lg-4">
-                            <input type="password" id="password" name="password" class="form-control">
+                            <input type="password" id="Password" name="Password" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-4">Confirm Password</label>
 
                         <div class="col-lg-4">
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+                            <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control">
                         </div>
                     </div>
 
                     <div class="form-actions no-margin-bottom">
-                        <input type="submit" value="Validate" class="btn btn-primary">
+                        <input type="submit" class="btn btn-primary" value="Save Shop-Owner" />                    
                     </div>
 
                 </form>
@@ -764,13 +761,8 @@
             <!--jQuery -->
             <script src="../assets/lib/jquery/jquery.js"></script>
 
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.6/js/jquery.tablesorter.min.js"></script>
-                    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
-                    <script src="//cdnjs.cloudflare.com/ajax/libs/jQuery-Validation-Engine/2.6.4/jquery.validationEngine.min.js"></script>
-                    <script src="//cdnjs.cloudflare.com/ajax/libs/jQuery-Validation-Engine/2.6.4/languages/jquery.validationEngine-en.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
 
             <!--Bootstrap -->
             <script src="../assets/lib/bootstrap/js/bootstrap.js"></script>
@@ -779,7 +771,6 @@
             <!-- Screenfull -->
             <script src="../assets/lib/screenfull/screenfull.js"></script>
 
-                    <script src="/assets/lib/jquery-validation/jquery.validate.js"></script>
 
             <!-- Metis core scripts -->
             <script src="../assets/js/core.js"></script>
@@ -789,8 +780,6 @@
                 <script>
                     $(function() {
                       Metis.OwnerShop();
-                      Metis.metisSortable();
-                      Metis.formValidation();
                     });
                 </script>
 
