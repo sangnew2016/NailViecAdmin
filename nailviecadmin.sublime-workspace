@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"file",
+				"fileName"
+			],
+			[
+				"addre",
+				"addressMap"
+			],
+			[
+				"phone",
+				"phoneContact"
+			],
+			[
 				"getShop",
 				"getShopOwners"
 			],
@@ -84,42 +96,30 @@
 	"buffers":
 	[
 		{
-			"file": "client/src/js/core/Metis.js",
+			"file": "api/authenticate/includes/psl-config.php",
 			"settings":
 			{
-				"buffer_size": 3905,
+				"buffer_size": 2093,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "client/src/templates/pages/_ownershop.hbs",
+			"file": "api/authenticate/index.php",
 			"settings":
 			{
-				"buffer_size": 4171,
+				"buffer_size": 5466,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": ";(function($){\n  \"use strict\";\n\n  Metis.OwnerShop = function() {\n\n    var config = {\n        getListApi: 'admin/getShopOwners',\n        getDetailApi: 'admin/getShopOwner?id=',\n        putDetailApi: 'admin/putShopOwner',\n        postDetailApi: 'admin/postShopOwner',\n\n        gridId: 'dev-grid-shop-owner',\n        tableId: 'dev-shop-owner-datatable',\n        cancelBtnId: 'dev-cancel-shop-owner',\n        addBtnId: 'dev-add-shop-owner',\n        editAreaId: 'dev-edit-shop-owner-area',\n        formValidate: 'dev-shop-Owner-validate',\n\n        rowClass: 'row-shop-owner',\n        sortingClass: 'sortableTable',\n\n        defaultId: 0,\n        defaultStatusId: 1,\n        model: {\n            id: 'Id',\n            fullName: 'FullName',\n            phone: 'Phone',\n            email: 'Email',\n            dateUpdated: 'DateUpdated',\n            statusId: 'ShopOwnerStatusId',\n            statusName: 'ShopOwnerStatusName',\n            password: 'Password',\n            confirmPassword: 'ConfirmPassword'\n        }\n        \n    };\n\n    init();\n      \n    function init() {        \n        loadGridByData();\n        registerOnSelectedRow();\n        registerOnActionCommand();\n    }\n\n    function loadGridByData() {\n        Metis.data.get(config.getListApi).then(function(data) {\n            showEditArea(false, 0);\n            $('#' + config.gridId).html(buildHtmlGrid(data));                        \n            $('#' + config.tableId).dataTable({\n                \"order\": [[ 4, \"asc\" ]]\n            });\n        });\n\n        function buildHtmlGrid(data) {\n            var str = \"\"; \n            str += '<table id=\"' + config.tableId + '\" class=\"table table-bordered table-hover\">';\n            str += '  <thead>';\n            str += '    <tr>';\n            str += '      <th>#</th>';\n            str += '      <th>Full Name</th>';\n            str += '      <th>Phone</th>';\n            str += '      <th>Email</th>';\n            str += '      <th>Date Updated</th>';\n            str += '      <th>Status</th> ';                                \n            str += '    </tr>';\n            str += '  </thead>';\n            str += '  <tbody>';\n            for(var i = 0; i < data.length; i++) {\n                var shopOwner = data[i];\n                str += '    <tr class=\"' + config.rowClass + '\" id=\"' + shopOwner[config.model.id] + '\">';\n                str += '      <td>' + shopOwner[config.model.id] + '</td>';\n                str += '      <td>' + shopOwner[config.model.fullName] + '</td>';\n                str += '      <td>' + shopOwner[config.model.phone] + '</td>';\n                str += '      <td>' + shopOwner[config.model.email] + '</td>';\n                str += '      <td>' + shopOwner[config.model.dateUpdated] + '</td>';\n                str += '      <td>' + shopOwner[config.model.statusName] + '</td>';                                  \n                str += '    </tr>';\n            }                               \n            str += '  </tbody>';\n            str += '</table>';\n            return str;\n        }\n    }    \n\n    function registerOnSelectedRow() {\n        $('#' + config.gridId).on('click', '.' + config.rowClass, onSelectRow);\n\n        function onSelectRow() {\n            changeBackgroundOnSelectedRow(this);                     \n            config.defaultId = Number(this.getAttribute(\"id\"));             \n            Metis.data.get(config.getDetailApi + config.defaultId).then(function(rows) {\n                var rowData = (rows && rows[0]) || {};\n                fillDataIntoDetailUI(rowData);\n            });    \n        }\n\n        function changeBackgroundOnSelectedRow(rowElement) {\n            $('.' + config.rowClass).css({backgroundColor: '#fff'});\n            $(rowElement).css({backgroundColor: '#ddd'});  \n        }\n\n        function fillDataIntoDetailUI(data) {\n            fillValueInputControls(data);       \n            showEditArea(true); \n            $('#' + config.cancelBtnId).text('Cancel Editing');                \n        }         \n    }\n\n    function registerOnActionCommand() {\n        $('#' + config.addBtnId).on('click', function(event) {\n            fillValueInputControls({});\n            showEditArea(true);\n            config.defaultId = 0;\n            $('#' + config.cancelBtnId).text('Cancel Adding');            \n        });\n\n        $('#' + config.cancelBtnId).on('click', function(event) {\n            showEditArea(false);            \n        });   \n    }\n    \n    function fillValueInputControls(data) {\n        document.getElementById(config.model.fullName).value = data[config.model.fullName] || '';\n        document.getElementById(config.model.phone).value = data[config.model.phone] || '';\n        document.getElementById(config.model.email).value = data[config.model.email] || '';\n        document.getElementById(config.model.password).value = '';\n        document.getElementById(config.model.confirmPassword).value = '';\n\n        //render combobox\n        Metis.data.ownerShop.renderSelectDOMByStatus(data[config.model.statusId], config.model.statusId);       \n    }\n\n    function showEditArea(isShowed, delay = 100) {\n        if (isShowed) {\n            $('#' + config.editAreaId).show(100, function() {\n            //    $('html, body').animate({ scrollTop: $('#' + config.editAreaId).height() - 50 }, 1000);\n            });\n            $('#' + config.cancelBtnId).show();\n        } else {\n            $('#' + config.editAreaId).hide(100, function() {\n            //    $('html, body').scrollTop();    \n            }); \n            $('#' + config.cancelBtnId).hide();\n        }\n    }\n    \n\n    //======================================\n    // UPDATE & INSERT\n    //======================================\n\n    $('#' + config.formValidate).validate({\n        rules: setRule(),\n        errorClass: 'help-block',\n        errorElement: 'span',\n        highlight: function(element, errorClass, validClass) {\n            $(element).parents('.form-group').removeClass('has-success').addClass('has-error');\n        },\n        unhighlight: function(element, errorClass, validClass) {\n            $(element).parents('.form-group').removeClass('has-error').addClass('has-success');\n        },\n        submitHandler: onSubmitHandler\n    });\n\n    function setRule() {\n        var rule = {};\n\n        rule[config.model.fullName] = \"required\",\n        rule[config.model.phone] = \"required\",\n        rule[config.model.email] = {\n            required: true,\n            email: true\n        },\n        rule[config.model.password] = {\n            required: false,\n            minlength: 5\n        },\n        rule[config.model.confirmPassword] = {\n            required: false,\n            minlength: 5,\n            equalTo: \"#\" + config.model.password\n        }\n        return rule;\n    }\n\n    function onSubmitHandler(form) {                    \n        var postedData = getParameters();\n\n        if (config.defaultId){\n            Metis.data.put(config.putDetailApi, postedData).then(function(data) {\n                loadGridByData();\n                showEditArea(false);\n            });\n        } else { \n            Metis.data.post(config.postDetailApi, postedData).then(function(data) {\n                loadGridByData();\n                showEditArea(false);\n            });\n        }                \n        return false;  // blocks regular submit since you have ajax\n\n        function getParameters() {\n            var param = {};\n            param[config.model.id] = config.defaultId || 0,\n            param[config.model.fullName] = document.getElementById(config.model.fullName).value,\n            param[config.model.phone] = document.getElementById(config.model.phone).value,\n            param[config.model.email] = document.getElementById(config.model.email).value,            \n            param[config.model.password] = document.getElementById(config.model.password).value,\n            param[config.model.confirmPassword] = document.getElementById(config.model.confirmPassword).value\n            \n            if(config.defaultId) {\n                var selectedValue = $('#' + config.model.statusId + ' select').find(\":selected\").val();\n                param[config.model.statusId] = selectedValue;\n            } else {\n                param[config.model.statusId] = config.defaultStatusId;\n            }   \n\n            return param;\n        }    \n         \n    }\n};\n  \nreturn Metis;\n})(jQuery);\n",
-			"file": "client/src/js/app/metis_OwnerShop.js",
-			"file_size": 8424,
-			"file_write_time": 131224687093689000,
+			"file": "api/authenticate/includes/process_login.php",
 			"settings":
 			{
-				"buffer_size": 8370,
+				"buffer_size": 1425,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "api/controller/admin.php",
-			"settings":
-			{
-				"buffer_size": 7374,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
 			}
 		}
 	],
@@ -168,22 +168,34 @@
 	"expanded_folders":
 	[
 		"/C/xampp/htdocs/nailviecadmin/api",
+		"/C/xampp/htdocs/nailviecadmin/api/authenticate",
 		"/C/xampp/htdocs/nailviecadmin/api/common",
 		"/C/xampp/htdocs/nailviecadmin/api/config",
 		"/C/xampp/htdocs/nailviecadmin/api/controller",
 		"/C/xampp/htdocs/nailviecadmin/client",
+		"/C/xampp/htdocs/nailviecadmin/client/public",
+		"/C/xampp/htdocs/nailviecadmin/client/public/assets/lib",
 		"/C/xampp/htdocs/nailviecadmin/client/src",
 		"/C/xampp/htdocs/nailviecadmin/client/src/js",
-		"/C/xampp/htdocs/nailviecadmin/client/src/js/app",
-		"/C/xampp/htdocs/nailviecadmin/client/src/js/core",
 		"/C/xampp/htdocs/nailviecadmin/client/src/templates",
-		"/C/xampp/htdocs/nailviecadmin/client/src/templates/data",
-		"/C/xampp/htdocs/nailviecadmin/client/src/templates/layouts",
-		"/C/xampp/htdocs/nailviecadmin/client/src/templates/partials",
+		"/C/xampp/htdocs/nailviecadmin/client/src/templates/pages",
 		"/C/xampp/htdocs/backup/nailviecadmin_old/assets/javascript"
 	],
 	"file_history":
 	[
+		"/C/xampp/htdocs/nailviecadmin/api/common/functions.php",
+		"/C/xampp/htdocs/nailviecadmin/api/controller/admin.php",
+		"/C/xampp/htdocs/nailviecadmin/client/src/js/app/metis_Shop.js",
+		"/C/xampp/htdocs/nailviecadmin/client/src/templates/pages/_shops.hbs",
+		"/C/xampp/htdocs/nailviecadmin/client/src/js/core/Metis.js",
+		"/C/xampp/htdocs/nailviecadmin/client/src/templates/pages/maps.hbs",
+		"/C/xampp/htdocs/nailviecadmin/client/src/js/app/metisMaps.js",
+		"/C/xampp/htdocs/backup/nailviecadmin_old/assets/javascript/index.html",
+		"/C/xampp/htdocs/nailviecadmin/client/src/templates/pages/_jobs.hbs",
+		"/C/xampp/htdocs/nailviecadmin/client/src/js/app/metis_Jobs.js",
+		"/C/xampp/htdocs/nailviecadmin/client/src/templates/partials/left.hbs",
+		"/C/xampp/htdocs/nailviecadmin/client/src/js/app/metis_OwnerShop.js",
+		"/C/xampp/htdocs/nailviecadmin/client/src/templates/pages/_ownershop.hbs",
 		"/C/xampp/htdocs/nailviecadmin/client/src/js/core/init.js",
 		"/C/xampp/htdocs/nailviecadmin/api/startup.php",
 		"/C/Users/Administrator/Downloads/TEMP/20161028/20161028/src/js/app/metis_OwnerShop.js",
@@ -194,7 +206,6 @@
 		"/C/xampp/htdocs/nailviecadmin/client/package.json",
 		"/C/xampp/htdocs/nailviecadmin/client/src/tasks/connect.js",
 		"/C/xampp/htdocs/nailviecadmin/client/gulpfile.babel.js",
-		"/C/xampp/htdocs/nailviecadmin/api/common/functions.php",
 		"/C/xampp/htdocs/nailviecadmin/client/src/js/app/formValidation.js",
 		"/C/xampp/htdocs/nailviecadmin/api/common/data.php",
 		"/C/xampp/htdocs/nailviecadmin/api/.htaccess",
@@ -259,6 +270,7 @@
 		"height": 90.0,
 		"where_history":
 		[
+			"C:\\xampp\\htdocs\\nailviecadmin\\api",
 			"C:\\xampp\\htdocs\\nailviecadmin\\client\\src",
 			"C:\\xampp\\htdocs\\nailviecadmin\\client\\src\\templates",
 			"C:\\xampp\\htdocs\\nailviecadmin\\client\\src",
@@ -276,6 +288,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"a1.png",
+			"fillValueInputControls",
+			"geocoding",
+			"gmaps-geocoding",
+			"map1",
+			"gmaps-basic",
+			"getShopBySelectDom",
+			"Title",
 			"Metis",
 			"statusId",
 			"status",
@@ -331,126 +351,95 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "client/src/js/core/Metis.js",
+					"file": "api/authenticate/includes/psl-config.php",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3905,
+						"buffer_size": 2093,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3145,
-								3145
+								1097,
+								1097
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1440.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "client/src/templates/pages/_ownershop.hbs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4171,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								244,
-								244
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "client/src/js/app/metis_OwnerShop.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8370,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1379,
-								1379
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 405.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "api/controller/admin.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7374,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2375,
-								2375
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/PHP/PHP.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "api/authenticate/index.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5466,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								865,
+								865
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "api/authenticate/includes/process_login.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1425,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1145,
+								1145
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 225.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
