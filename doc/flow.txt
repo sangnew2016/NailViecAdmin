@@ -1,0 +1,24 @@
+
+- script - lay tu local
+	khai bao npm
+- toi uu trang page
+
+Flow: 
+- thiet lap grunt
+- thiet lap gulp
+. tao port client: 3000 run
+. check code - lint
+. minimize & move file/folder
+. render - libary
+	+ template
+	+ set environment var
+	+ less -> css
+	+ ...
+
+Flow:
+- Tim cach add library vao (node_modules, bower_component)
+	-> package.json + bower.json
+	-> npm + bower
+- Move lib vao public
+	-> gulp
+-   
