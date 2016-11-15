@@ -1,3 +1,13 @@
+Database:
+Account access 
+	User: "sec_user"
+	Password: "eKcGZr59zAa2BEWU"
+Account login
+	Username: test_user
+	Email: test@example.com
+	Password: 6ZaxN2Vzm9NUJT2y
+		  6ZaxN2Vzm9NUJT2y
+
 
 - script - lay tu local
 	khai bao npm
