@@ -175,7 +175,7 @@ function login_check($mysqli) {
             }
         } else {
             // Could not prepare statement
-            header("Location: ../error.php?err=Database error: cannot prepare statement");
+            header("Location: http://localhost/nailviecadmin/api/authenticate/error.php?err=Database error: cannot prepare statement");
             exit();
         }
     } else {

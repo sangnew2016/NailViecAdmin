@@ -4,6 +4,7 @@ module.exports = {
     flatten: true,
     postprocess: require('pretty'),
     assets: '<%= config.assets %>',
+    abc: '<%= config.abc %>',
     data: '<%= config.data %>',
     partials: ['<%= config.partials %>'],
     helpers: ['<%= config.helpers %>', 'handlebars-helper-analytics'],

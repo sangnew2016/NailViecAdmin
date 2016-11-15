@@ -163,7 +163,7 @@
 
         //render combobox
         Metis.data.shop.renderSelectDOMByStatus(data[config.model.statusId], config.model.statusId);       
-        Metis.data.shop.renderSelectDOMByArea(data[config.model.areaId], config.model.areaId);
+        Metis.data.shop.renderSelectDOMByArea(data[config.model.areaId], config.model.areaId);         
         Metis.data.shop.renderSelectDOMByShopOwner(data[config.model.ownerId], config.model.ownerId);
         
         //render googlemap
