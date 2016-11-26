@@ -12,11 +12,18 @@ class Config {
 
 	static function Connection() {
 		return array(
-	    	'host' => 'localhost',
-	    	'database' => 'reselleradmin_nailviec',
-	    	'username' => 'root',
-	    	'password' => ''
+		    'host' => '112.213.89.31',
+		    'database' => 'db_nailviec',
+		    'username' => 'basic_client',
+		    'password' => 'Aa123456!'
 		);
+
+		//return array(
+	    //	'host' => 'localhost',
+	    //	'database' => 'reselleradmin_nailviec',
+	    //	'username' => 'root',
+	    //	'password' => ''
+		//);
 	}
 
 }

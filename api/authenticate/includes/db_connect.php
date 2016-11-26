@@ -20,8 +20,8 @@
 include_once 'psl-config.php';   // Needed because functions.php is not included
 
 $mysqli = new mysqli(HOST, USER, PASSWORD, DATABASE);
-$errorPage = 'http://localhost:8000/nailviecadmin/api/authenticate/error.php?err=Unable to connect to MySQL';
-$loginPage = 'http://localhost:8000/nailviecadmin/api/authenticate/index.php';
+$errorPage = './error.php?err=Unable to connect to MySQL';
+$loginPage = './index.php';
 
 if ($mysqli->connect_error) {
     header("Location: $errorPage");
