@@ -248,8 +248,8 @@ class Admin {
 
 		//save googlemap as Image		
 		$fileName = Functions::SaveGoogleMapIntoImage($latitude, $longtitude, 'shop');
-		if (strlen($fileName) > 0) {
-			echo '@error:Cannot save file googlemap into server. Please try it again!';
+		if (strlen($fileName) <= 0) {
+			echo '@error:' . $fileName;			
 			return;
 		}
 		
@@ -325,10 +325,10 @@ class Admin {
 		$jobStatusId = Functions::GetNumberParam($request, 'JobStatusId');
 		$shopId = Functions::GetNumberParam($request, 'NailShopId');		
 
-		$title = Functions::GetTextParam($request, 'Title');
-		$body = Functions::GetTextParam($request, 'Body');		
-		$phoneContact = Functions::GetTextParam($request, 'PhoneContact');
-		$salary = Functions::GetTextParam($request, 'Salary');	
+		$title = Functions::GetHtmlParam($request, 'Title');
+		$body = Functions::GetHtmlParam($request, 'Body');		
+		$phoneContact = Functions::GetHtmlParam($request, 'PhoneContact');
+		$salary = Functions::GetHtmlParam($request, 'Salary');	
 		$dateUpdated = date("Y-m-d H:i:s");
 
 		$sql = "insert into Jobs(JobStatusId, NailShopId, Title, Body, PhoneContact, Salary, DateUpdated) 
@@ -350,10 +350,10 @@ class Admin {
 		$jobStatusId = Functions::GetNumberParam($request, 'JobStatusId');
 		$shopId = Functions::GetNumberParam($request, 'NailShopId');		
 
-		$title = Functions::GetTextParam($request, 'Title');
-		$body = Functions::GetTextParam($request, 'Body');		
-		$phoneContact = Functions::GetTextParam($request, 'PhoneContact');
-		$salary = Functions::GetTextParam($request, 'Salary');	
+		$title = Functions::GetHtmlParam($request, 'Title');
+		$body = Functions::GetHtmlParam($request, 'Body');		
+		$phoneContact = Functions::GetHtmlParam($request, 'PhoneContact');
+		$salary = Functions::GetHtmlParam($request, 'Salary');	
 		$dateUpdated = date("Y-m-d H:i:s");
 
 		$sql = "update Jobs 

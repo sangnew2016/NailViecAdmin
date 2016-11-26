@@ -190,6 +190,8 @@
             //    $('html, body').scrollTop();    
             }); 
             $('#' + config.cancelBtnId).hide();
+            addressMap = null;
+            $('#' + config.model.addressMap).html('');
         }
     }
     

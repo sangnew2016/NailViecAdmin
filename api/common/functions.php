@@ -97,16 +97,33 @@ class Functions {
 		return $value;
 	}
 
+	static function GetHtmlParam($request, $paramName) {					
+		$empty = '';
+		if (!isset($request) || !isset($paramName)) return $empty;
+		if (!array_key_exists($paramName, $request)) return $empty;
+
+		$param = $request[$paramName];
+		if (Functions::IsNullOrEmptyString($param)) return $empty;			
+
+		$value = trim($param);
+		return $value;
+	}
+
 	static function SaveGoogleMapIntoImage($latitude, $longtitude, $prefix) {		
 		$fileName = '_' . Functions::udate("Y-m-d_H-i-s_u") . '_' . $prefix . '.png';
 		$filePath = "output/googlemap/$fileName";	
 
 		$link = "http://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longtitude&zoom=13&size=960x640&markers=color:blue%7Clabel:S%7C$latitude,$longtitude&sensor=false"; 	
-		
-		if (@copy($link, $filePath)) {
-			return $fileName;
-		} else {
-			return ""; 
+				
+		try	{
+			if (@copy($link, $filePath)) {
+				return $fileName;
+			} else {
+				return ""; 
+			}
+		}
+		catch(Exception $e) {
+		  return 'Message: ' . $e->getMessage();
 		}		
 	}
 

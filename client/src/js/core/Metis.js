@@ -2,7 +2,7 @@
     var
         // Are we expecting a touch or a click?
         buttonPressedEvent = 'touchstart click',
-        apiUrl = 'http://localhost:8000/nailviecadmin/api/',
+        apiUrl = 'http://localhost/nailviecadmin/api/',
         data = {},
 
         Metis = function() {
