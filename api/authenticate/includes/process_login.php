@@ -27,8 +27,13 @@ if (isset($_POST['email'], $_POST['p'])) {
     $password = $_POST['p']; // The hashed password.
     
     if (login($email, $password, $mysqli) == true) {
-        // Login success 
-        header("Location: ../../../client/public/index.html");
+        // Login success        
+        if ($isDevelopment) {
+            header("Location: ../../../client/public/index.html");
+        } else {
+            header("Location: ../../../client/index.html");
+        }
+       
         exit();
     } else {
         // Login failed 

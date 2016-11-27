@@ -32,3 +32,16 @@ Flow:
 - Move lib vao public
 	-> gulp
 -   
+
+Hosting:
+- Change connect database
+	psl-config.php	-> login
+	connection.php	-> app
+- Change mode tren api
+	$isDevelopment (url sau khi login success)
+		process_login.php
+- Change mode tren client
+	Metis.js (Core)
+		apiUrl = 'http://localhost/nailviecadmin/api/',
+	nav.hbs - khi logout tro ve
+		

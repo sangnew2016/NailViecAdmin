@@ -22,6 +22,7 @@ include_once 'psl-config.php';   // Needed because functions.php is not included
 $mysqli = new mysqli(HOST, USER, PASSWORD, DATABASE);
 $errorPage = './error.php?err=Unable to connect to MySQL';
 $loginPage = './index.php';
+$isDevelopment = true;
 
 if ($mysqli->connect_error) {
     header("Location: $errorPage");

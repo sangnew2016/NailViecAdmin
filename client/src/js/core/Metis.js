@@ -1,8 +1,17 @@
 ;(function(window) {
+    window.env = {
+        isDevelopment: true,
+        apiUrlHost: 'http://365loc.com/nailviec/admin/api/',        
+        logoutUrlHost: 'http://365loc.com/nailviec/admin/api/authenticate/includes/logout.php',
+
+        apiUrlLocal: 'http://localhost/nailviecadmin/api/',
+        logoutUrlLocal: 'http://localhost/nailviecadmin/api/authenticate/includes/logout.php'
+    };
+
     var
         // Are we expecting a touch or a click?
         buttonPressedEvent = 'touchstart click',
-        apiUrl = 'http://localhost/nailviecadmin/api/',
+        apiUrl = window.env.isDevelopment ? window.env.apiUrlLocal : window.env.apiUrlHost,
         data = {},
 
         Metis = function() {
